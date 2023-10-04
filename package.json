@@ -1,0 +1,29 @@
+{
+  "name": "hackme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "client-install": "cd client && npm install",
+    "start": "node src/index.js",
+    "serve:server": "nodemon src/index.js",
+    "serve:client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run serve:server\" \"npm run serve:client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd client && npm install && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuillaumeDorschner/HackMe.git"
+  },
+  "author": "Guillaume Dorschner",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "concurrently": "^7.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
