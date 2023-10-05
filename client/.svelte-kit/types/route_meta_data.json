@@ -1,5 +1,8 @@
 {
 	"/": [],
+	"/home": [],
 	"/login": [],
-	"/signup": []
+	"/settings": [],
+	"/signup": [],
+	"/write": []
 }
