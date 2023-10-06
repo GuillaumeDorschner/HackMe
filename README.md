@@ -19,8 +19,7 @@ npm install && npm run client-install
 npm run dev
 ```
 4. Navigate to `localhost` in your browser to view the platform
-5. Look at the documentation for hacking the platform [here](https://)
-
+5. Look at the documentation for hacking the platform [here](https://github.com/GuillaumeDorschner/HackMe/tree/main/Documentation)
 
 ## Developer's Corner 🛠️
 
