@@ -1,41 +1,40 @@
 <script>
   import { onMount } from "svelte";
   import "../../app.css";
-
-  let user = {
-    firstName: "Guillaume",
-    lastName: "Dorschner",
-    username: "gdorschner",
-    email: "guillaume@example.com",
-    password: "********",
-    avatar: "https://",
-  };
+  import { user } from '../../store/store.js';
 
   let showAlert = false;
   let validationError = "";
 
+  let userForm = $user;
+
+  function updateUser(newData) {
+    user.update(u => {
+      return {...u, ...newData};
+    });
+  }
+
   function saveChanges() {
-    // call backend
-    fetch("/api/users/me", {
+    fetch("", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user),
+      body: JSON.stringify(userForm),
     })
-      .then((res) => {
-        if (res.ok) {
-          console.log("Changes saved:", user);
-          // change the stored user
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        showAlert = true;
-        validationError = err.message;
-      });
+    .then((res) => {
+
+      console.log("Changes saved:", userForm);
+      updateUser(userForm);
+    })
+    .catch((err) => {
+      console.error(err);
+      showAlert = true;
+      validationError = err.message || 'Something went wrong';
+    });
   }
 </script>
+
 
 <div>
   <header class="flex items-center justify-between p-4 border-b blur-effect">
@@ -44,9 +43,9 @@
     </div>
 
     <div class="flex items-center">
-      <span class="mx-2">{user.firstName} {user.lastName}</span>
+      <span class="mx-2">{$user.firstName} {$user.lastName}</span>
       <img
-        src={user.avatar}
+        src={$user.avatar}
         alt="User avatar"
         class="mx-2 w-10 h-10 rounded-full"
       />
@@ -86,7 +85,7 @@
           <input
             id="firstName"
             type="text"
-            bind:value={user.firstName}
+            bind:value={userForm.firstName}
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
@@ -98,7 +97,7 @@
           <input
             id="lastName"
             type="text"
-            bind:value={user.lastName}
+            bind:value={userForm.lastName}
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
@@ -110,7 +109,7 @@
           <input
             id="username"
             type="text"
-            bind:value={user.username}
+            bind:value={userForm.username}
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
@@ -122,7 +121,7 @@
           <input
             id="email"
             type="email"
-            bind:value={user.email}
+            bind:value={userForm.email}
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
@@ -134,7 +133,7 @@
           <input
             id="password"
             type="password"
-            bind:value={user.password}
+            bind:value={userForm.password}
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
@@ -146,7 +145,7 @@
           <input
             id="avatar"
             type="text"
-            bind:value={user.avatar}
+            bind:value={userForm.avatar}
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
@@ -185,6 +184,6 @@
     z-index: 1000;
   }
   main {
-    margin-top: 60px; /* Height of the header */
+    margin-top: 60px;
   }
 </style>
