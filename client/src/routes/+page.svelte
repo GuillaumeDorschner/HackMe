@@ -51,11 +51,14 @@
       class="min-h-96 relative flex flex-1 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 py-16 shadow-lg md:py-20 xl:py-48"
     >
       <img
-        src="https://images.pexels.com/photos/18273135/pexels-photo-18273135/free-photo-of-snowed-fjadrargljufur-canyon-on-iceland.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        src="https://plus.unsplash.com/premium_photo-1670884128248-858c56bdb838?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
         loading="lazy"
         alt="Photo by Fakurian Design"
         class="absolute inset-0 h-full w-full object-cover object-center"
       />
+
+      <div class="absolute inset-0 bg-secondary mix-blend-multiply"></div>
+
 
       <div class="relative flex flex-col items-center p-4 sm:max-w-xl">
         <h1
@@ -67,7 +70,7 @@
         <div class="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center">
           <a
             href="/signup"
-            class="inline-block rounded-lg bg-primary px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-tone transition duration-100 hover:bg-tone focus-visible:ring active:bg-tone md:text-base"
+            class="inline-block rounded-lg bg-primary px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-tone transition duration-100 hover:bg-secondary focus-visible:ring active:bg-secondary md:text-base"
             >Start now</a
           >
         </div>
