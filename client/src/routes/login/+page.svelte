@@ -54,7 +54,7 @@
           <input
             bind:value={email}
             name="email"
-            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -68,7 +68,7 @@
             bind:value={password}
             name="password"
             type="password"
-            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -82,7 +82,7 @@
         <p class="text-center text-sm text-gray-500">
           Don't have an account? <a
             href="signup"
-            class="text-primary transition duration-100 hover:text-indigo-600 active:text-indigo-700"
+            class="text-primary transition duration-100 hover:text-primary active:text-tone"
             >Register</a
           >
         </p>
