@@ -1,17 +1,95 @@
 import { writable } from 'svelte/store';
 
-
-const count = writable(0, () => {
-	console.log('got a subscriber');
-	return () => console.log('no more subscribers');
+export let user = writable({
+	firstName: "Guillaume",
+	lastName: "Dorschner",
+	username: "gdorschner",
+	email: "guillaume@example.com",
+	password: "********",
+	avatar: "https://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQdAnprsidzbOSZ4jI1SvcFeIEuFKwBLrILGo8tLCEA4ixMzfxUQfk6onBDhipea4sD",
 });
 
-
-count.set(1);
-
-
-const unsubscribe = count.subscribe((value) => {
-	console.log(value);
-});
-
-unsubscribe();
+export let posts = writable([
+    {
+      id: 1,
+      author: "John Doe",
+      content: "This is my first post!",
+      timestamp: "2023-01-01T12:00:00",
+      likes: 20,
+      comments: [
+        {
+          commenter: "Jane Doe",
+          comment: "Great post!",
+        },
+      ],
+    },
+    {
+      id: 2,
+      author: "Jane Doe",
+      content: "Hello, World!",
+      timestamp: "2023-01-02T12:00:00",
+      likes: 35,
+      comments: [
+        {
+          commenter: "John Doe",
+          comment: "Hello to you too!",
+        },
+      ],
+    },
+    {
+      id: 3,
+      author: "Emily Davis",
+      content: "Learning Svelte is fun!",
+      timestamp: "2023-01-03T12:00:00",
+      likes: 10,
+      comments: [
+        {
+          commenter: "John Doe",
+          comment: "I agree!",
+        },
+      ],
+    },
+    {
+      id: 4,
+      author: "Mark Green",
+      content: "Happy New Year, everyone!",
+      timestamp: "2023-01-01T00:00:00",
+      likes: 50,
+      comments: [
+        {
+          commenter: "Jane Doe",
+          comment: "Happy New Year!",
+        },
+        {
+          commenter: "Emily Davis",
+          comment: "Wishing everyone a great year ahead!",
+        },
+      ],
+    },
+    {
+      id: 5,
+      author: "Sophia Lee",
+      content: "Just got a new puppy!",
+      timestamp: "2023-01-05T09:00:00",
+      likes: 120,
+      comments: [
+        {
+          commenter: "Jane Doe",
+          comment: "So cute!",
+        },
+      ],
+    },
+    {
+      id: 6,
+      author: "Daniel Smith",
+      content: "Anyone else love hiking?",
+      timestamp: "2023-01-06T11:00:00",
+      likes: 15,
+      comments: [
+        {
+          commenter: "Emily Davis",
+          comment: "Absolutely!",
+        },
+      ],
+    },
+  ]);
