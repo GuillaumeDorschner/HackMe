@@ -109,7 +109,7 @@
               >
               <input
                 name="email"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
 
@@ -121,7 +121,7 @@
               >
               <input
                 name="username"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
 
@@ -133,7 +133,7 @@
               >
               <input
                 name="firstname"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
 
@@ -145,7 +145,7 @@
               >
               <input
                 name="lastname"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
 
@@ -157,7 +157,7 @@
               >
               <input
                 name="email"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
 
@@ -169,7 +169,7 @@
               >
               <input
                 name="password"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
 
@@ -181,7 +181,7 @@
               >
               <input
                 name="password"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
           </div>
@@ -230,7 +230,7 @@
                 type="file"
                 name="picture"
                 accept="image/*"
-                class="file-input w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                class="file-input w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
                 on:change={handleFileChange}
               />
             </div>
@@ -248,7 +248,7 @@
         <p class="text-center text-sm text-gray-500">
           Already have an account? <a
             href="login"
-            class="text-primary transition duration-100 hover:text-indigo-600 active:text-indigo-700"
+            class="text-primary transition duration-100 hover:text-primary active:text-tone"
             >Login</a
           >
         </p>

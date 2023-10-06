@@ -16,35 +16,15 @@
       <div>
         <a
           href="/login"
-          class="hidden rounded-lg bg-gray-200 px-8 py-3 text-center text-sm font-semibold text-gray-500 outline-none ring-tone transition duration-100 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base lg:inline-block"
+          class="rounded-lg bg-gray-200 px-4 py-2 text-center text-xs font-semibold text-gray-500 outline-none ring-tone transition duration-100 hover:bg-gray-300 focus-visible:ring active:text-gray-700 lg:px-8 lg:py-3 lg:text-sm lg:text-base"
           >Login</a
         >
         <a
           href="/signup"
-          class="hidden rounded-lg bg-primary px-8 py-3 text-center text-sm font-semibold text-gray-100 outline-none ring-tone transition duration-100 hover:bg-secondary focus-visible:ring active:text-gray-200 md:text-base lg:inline-block"
+          class="rounded-lg bg-primary px-4 py-2 text-center text-xs font-semibold text-gray-100 outline-none ring-tone transition duration-100 hover:bg-secondary focus-visible:ring active:text-gray-200 lg:px-8 lg:py-3 lg:text-sm lg:text-base"
           >Sign Up</a
         >
       </div>
-
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 rounded-lg bg-gray-200 px-2.5 py-2 text-sm font-semibold text-gray-500 ring-tone hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base lg:hidden"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-            clip-rule="evenodd"
-          />
-        </svg>
-
-        Menu
-      </button>
     </header>
 
     <section
@@ -57,8 +37,7 @@
         class="absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <div class="absolute inset-0 bg-secondary mix-blend-multiply"></div>
-
+      <div class="absolute inset-0 bg-secondary mix-blend-multiply" />
 
       <div class="relative flex flex-col items-center p-4 sm:max-w-xl">
         <h1
@@ -88,83 +67,103 @@
     </h2>
 
     <div
-      class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mb-8 md:grid-cols-3 lg:grid-cols-4 md:gap-6 xl:gap-8"
+      class="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:mb-8 md:grid-cols-4 md:gap-6 xl:gap-8"
     >
-      <div
-        class="group relative flex flex-col h-80 overflow-hidden rounded-lg bg-gray-100 shadow-lg"
+      <a
+        href="#"
+        class="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-80"
       >
-        <a href="#">
-          <img
-            src="https://example.com/image1.jpg"
-            alt="Topic 1"
-            class="object-cover w-full h-2/3"
-          />
-        </a>
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">Wellness and Self-Care</h3>
-          <p class="text-sm text-gray-600">
-            Exploring the importance of taking time to care for oneself, from
-            physical fitness to mental well-being.
+        <img
+          src="https://plus.unsplash.com/premium_photo-1675706185894-e48c37765c04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2160&q=80"
+          loading="lazy"
+          alt="Sports and Fitness"
+          class="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
+        />
+
+        <div
+          class="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"
+        />
+
+        <div class="relative mb-3 ml-4">
+          <h3 class="text-sm text-white md:text-lg">Sports and Fitness</h3>
+          <p class="text-xs text-white">
+            Exploring the importance of physical fitness and sports activities
+            in daily life.
           </p>
         </div>
-      </div>
+      </a>
 
-      <div
-        class="group relative flex flex-col h-80 overflow-hidden rounded-lg bg-gray-100 shadow-lg"
+      <a
+        href="#"
+        class="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-80"
       >
-        <a href="#">
-          <img
-            src="https://example.com/image2.jpg"
-            alt="Topic 2"
-            class="object-cover w-full h-2/3"
-          />
-        </a>
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">The Impact of Technology</h3>
-          <p class="text-sm text-gray-600">
+        <img
+          src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1640&q=80"
+          loading="lazy"
+          alt="Technology"
+          class="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
+        />
+
+        <div
+          class="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"
+        />
+
+        <div class="relative mb-3 ml-4">
+          <h3 class="text-sm text-white md:text-lg">Technology</h3>
+          <p class="text-xs text-white">
             An overview of how technology has changed our lives, for better or
             worse, and what to expect in the future.
           </p>
         </div>
-      </div>
+      </a>
 
-      <div
-        class="group relative flex flex-col h-80 overflow-hidden rounded-lg bg-gray-100 shadow-lg"
+      <a
+        href="#"
+        class="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-80"
       >
-        <a href="#">
-          <img
-            src="https://example.com/image3.jpg"
-            alt="Topic 3"
-            class="object-cover w-full h-2/3"
-          />
-        </a>
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">Travel and Culture</h3>
-          <p class="text-sm text-gray-600">
+        <img
+          src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1642&q=80"
+          loading="lazy"
+          alt="Travel and Culture"
+          class="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
+        />
+
+        <div
+          class="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"
+        />
+
+        <div class="relative mb-3 ml-4">
+          <h3 class="text-sm text-white md:text-lg">Travel and Culture</h3>
+          <p class="text-xs text-white">
             Sharing insights into different cultures around the world, travel
             tips, and the benefits of exploring new places.
           </p>
         </div>
-      </div>
+      </a>
 
-      <div
-        class="group relative flex flex-col h-80 overflow-hidden rounded-lg bg-gray-100 shadow-lg"
+      <a
+        href="#"
+        class="group relative flex h-48 items-end overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-80"
       >
-        <a href="#">
-          <img
-            src="https://example.com/image4.jpg"
-            alt="Topic 4"
-            class="object-cover w-full h-2/3"
-          />
-        </a>
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">Personal Finance</h3>
-          <p class="text-sm text-gray-600">
-            A guide on managing money, budgeting, and planning for financial
-            security in both the short term and long term.
+        <img
+          src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1567&q=80"
+          loading="lazy"
+          alt="Wellness"
+          class="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
+        />
+
+        <div
+          class="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"
+        />
+
+        <div class="relative mb-3 ml-4">
+          <h3 class="text-sm text-white md:text-lg">Wellness</h3>
+          <p class="text-xs text-white">
+            Discussing wellness routines, mental health, and how to find balance
+            in the modern world.
           </p>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </div>
@@ -301,7 +300,7 @@
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            DevSecOps
+            Tech Lead
           </p>
 
           <div class="flex justify-center">
@@ -375,8 +374,6 @@
         </div>
       </div>
 
-
-
       <div class="flex flex-col items-center rounded-lg bg-gray-100 p-4 lg:p-8">
         <div
           class="mb-2 h-24 w-24 overflow-hidden rounded-full bg-gray-200 shadow-lg md:mb-4 md:h-32 md:w-32"
@@ -395,7 +392,7 @@
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            DevSecOps
+            Rapporteur
           </p>
 
           <div class="flex justify-center">
@@ -423,7 +420,6 @@
         </div>
       </div>
 
-
       <div class="flex flex-col items-center rounded-lg bg-gray-100 p-4 lg:p-8">
         <div
           class="mb-2 h-24 w-24 overflow-hidden rounded-full bg-gray-200 shadow-lg md:mb-4 md:h-32 md:w-32"
@@ -442,13 +438,13 @@
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            DevSecOps
+            CEO
           </p>
 
           <div class="flex justify-center">
             <div class="flex gap-4">
               <a
-                href="https://www.linkedin.com/in/louis-anne-3a068a224/"
+                href="https://www.linkedin.com/in/sha%C3%AFna-bakili-2b3a5720b/"
                 target="_blank"
                 class="text-gray-400 transition duration-100 hover:text-gray-500 active:text-gray-600"
               >
@@ -470,7 +466,6 @@
         </div>
       </div>
 
-
       <div class="flex flex-col items-center rounded-lg bg-gray-100 p-4 lg:p-8">
         <div
           class="mb-2 h-24 w-24 overflow-hidden rounded-full bg-gray-200 shadow-lg md:mb-4 md:h-32 md:w-32"
@@ -489,7 +484,7 @@
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            DevSecOps
+            Communications Manager
           </p>
 
           <div class="flex justify-center">
@@ -517,7 +512,6 @@
         </div>
       </div>
 
-
       <div class="flex flex-col items-center rounded-lg bg-gray-100 p-4 lg:p-8">
         <div
           class="mb-2 h-24 w-24 overflow-hidden rounded-full bg-gray-200 shadow-lg md:mb-4 md:h-32 md:w-32"
@@ -536,7 +530,7 @@
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            DevSecOps
+            Researcher & Designer
           </p>
 
           <div class="flex justify-center">
@@ -564,7 +558,6 @@
         </div>
       </div>
 
-
       <div class="flex flex-col items-center rounded-lg bg-gray-100 p-4 lg:p-8">
         <div
           class="mb-2 h-24 w-24 overflow-hidden rounded-full bg-gray-200 shadow-lg md:mb-4 md:h-32 md:w-32"
@@ -583,7 +576,7 @@
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            DevSecOps
+            Communications Manager
           </p>
 
           <div class="flex justify-center">
@@ -610,9 +603,6 @@
           </div>
         </div>
       </div>
-
-
-
     </div>
   </div>
 </div>
@@ -641,11 +631,6 @@
               HackMe
             </a>
           </div>
-
-          <p class="mb-6 text-gray-500 sm:pr-8">
-            Filler text is dummy text which has no meaning however looks very
-            similar to real text
-          </p>
 
           <div class="flex gap-4">
             <a

@@ -140,9 +140,7 @@
             fill="currentColor"
           />
         </a>
-        <a class="ml-2 px-4 py-2 rounded bg-primary text-white"
-          >Write a Blog</a
-        >
+        <a class="ml-2 px-4 py-2 rounded bg-primary text-white">Write a Blog</a>
       </div>
     </div>
   </header>
