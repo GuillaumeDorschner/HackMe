@@ -20,11 +20,11 @@
 
   async function next() {
     if (validateFields()) {
-      console.log("Going to next step...");
-      step = 0;
-      showAlert = false;
-      await sleep(805);
-      step = 2;
+    console.log("Going to next step...");
+    step = 0;
+    showAlert = false;
+    await sleep(805);
+    step = 2;
     }
   }
 

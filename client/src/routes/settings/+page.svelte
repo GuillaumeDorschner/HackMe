@@ -11,9 +11,29 @@
     avatar: "https://",
   };
 
+  let showAlert = false;
+  let validationError = "";
+
   function saveChanges() {
     // call backend
-    console.log("Changes saved:", user);
+    fetch("/api/users/me", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((res) => {
+        if (res.ok) {
+          console.log("Changes saved:", user);
+          // change the stored user
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        showAlert = true;
+        validationError = err.message;
+      });
   }
 </script>
 
@@ -37,6 +57,27 @@
     <section class="m-8 w-full max-w-2xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">Settings</h1>
 
+      <a
+        class="text-blue-500 hover:text-blue-700 inline-flex items-center"
+        href="/home"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          class="w-4 h-4 mr-2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        back
+      </a>
+
       <form on:submit|preventDefault={saveChanges}>
         <div class="mb-4">
           <label for="firstName" class="block text-sm font-medium text-gray-600"
@@ -46,7 +87,7 @@
             id="firstName"
             type="text"
             bind:value={user.firstName}
-            class="mt-1 p-2 w-full"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -58,7 +99,7 @@
             id="lastName"
             type="text"
             bind:value={user.lastName}
-            class="mt-1 p-2 w-full"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -70,7 +111,7 @@
             id="username"
             type="text"
             bind:value={user.username}
-            class="mt-1 p-2 w-full"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -82,7 +123,7 @@
             id="email"
             type="email"
             bind:value={user.email}
-            class="mt-1 p-2 w-full"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -94,7 +135,7 @@
             id="password"
             type="password"
             bind:value={user.password}
-            class="mt-1 p-2 w-full"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -106,7 +147,7 @@
             id="avatar"
             type="text"
             bind:value={user.avatar}
-            class="mt-1 p-2 w-full"
+            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
         </div>
 
@@ -115,6 +156,20 @@
             >Save Changes</button
           >
         </div>
+
+        {#if showAlert}
+          <div
+            role="alert"
+            class="rounded border-s-4 border-red-500 bg-red-50 p-4"
+          >
+            <strong class="block font-medium text-red-800">
+              Something went wrong
+            </strong>
+            <p class="mt-2 text-sm text-red-700">
+              {validationError}
+            </p>
+          </div>
+        {/if}
       </form>
     </section>
   </main>

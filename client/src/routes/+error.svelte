@@ -36,6 +36,7 @@
         <img
           src="/404.svg"
           loading="lazy"
+          alt="404"
           class="m-auto object-cover object-center"
           style="width: 300px;"
         />
