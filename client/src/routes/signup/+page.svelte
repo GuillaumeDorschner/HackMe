@@ -2,17 +2,21 @@
   import { onMount } from "svelte";
   import "../../app.css";
   import { fade, fly } from "svelte/transition";
+  import { goto } from "$app/navigation";
 
   let step = 1;
-  let photoFile;
-  let email = "";
-  let username = "";
-  let firstname = "";
-  let lastname = "";
-  let password = "";
-  let rePassword = "";
+  let avatar;
+  let rePassword = "********";
+
   let validationError = "";
   let showAlert = false;
+
+  let user = {
+    firstName: "Guillaume",
+    lastName: "Dorschner",
+    email: "guillaume@example.com",
+    password: "********",
+  };
 
   async function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -20,11 +24,11 @@
 
   async function next() {
     if (validateFields()) {
-    console.log("Going to next step...");
-    step = 0;
-    showAlert = false;
-    await sleep(805);
-    step = 2;
+      console.log("Going to next step...");
+      step = 0;
+      showAlert = false;
+      await sleep(805);
+      step = 2;
     }
   }
 
@@ -35,40 +39,86 @@
     step = 1;
   }
 
-  function login() {
-    if (validateFields() && photoFile) {
-      console.log("login");
-      console.log("Form submitted with photo:", photoFile);
-      // call backend
-    } else {
-      validationError = "Please complete all fields and upload a photo.";
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  async function login() {
+    if (validateFields()) {
+      console.log("login request");
+
+      const avatarBase64 = await getBase64(avatar);
+
+      user.avatar = avatarBase64;
+
+      try {
+        const userJson = JSON.stringify(user);
+
+        console.log("User data:", userJson);
+
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: userJson,
+        });
+
+        if (response.ok) {
+          console.log("Login successful");
+          showAlert = false;
+          goto("/home");
+        } else {
+          const errorData = await response.json();
+          console.log("Login failed:", errorData.error);
+          showAlert = true;
+          validationError = errorData.error || "Login failed";
+        }
+      } catch (error) {
+        console.log("Login request failed:", error);
+        showAlert = true;
+        validationError = "Something went wrong. Please try again later.";
+      }
     }
   }
 
   function handleFileChange(event) {
-    photoFile = event.target.files[0];
-    console.log("File selected:", photoFile);
+    avatar = event.target.files[0];
+    console.log("File selected:", avatar);
   }
 
   function validateFields() {
     showAlert = false;
-    if (
-      !email ||
-      !username ||
-      !firstname ||
-      !lastname ||
-      !password ||
-      !rePassword
-    ) {
-      validationError = "All fields must be filled out.";
-      showAlert = true;
-      return false;
-    }
 
-    if (password !== rePassword) {
-      validationError = "Passwords must match.";
-      showAlert = true;
-      return false;
+    if (step == 1) {
+      if (
+        !user.email ||
+        !user.firstName ||
+        !user.lastName ||
+        !user.password ||
+        !rePassword
+      ) {
+        validationError = "All fields must be filled out.";
+        showAlert = true;
+        return false;
+      }
+
+      if (user.password !== rePassword) {
+        validationError = "Passwords must match.";
+        showAlert = true;
+        return false;
+      }
+    } else {
+      if (!avatar) {
+        validationError = "Please upload a photo.";
+        showAlert = true;
+        return false;
+      }
     }
 
     return true;
@@ -108,19 +158,8 @@
                 >Email</label
               >
               <input
+                bind:value={user.email}
                 name="email"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
-              />
-            </div>
-
-            <div>
-              <label
-                for="username"
-                class="mb-2 inline-block text-sm text-gray-800 sm:text-base"
-                >UserName</label
-              >
-              <input
-                name="username"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
@@ -132,6 +171,7 @@
                 >First name</label
               >
               <input
+                bind:value={user.firstName}
                 name="firstname"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
@@ -144,6 +184,7 @@
                 >Last name</label
               >
               <input
+                bind:value={user.lastName}
                 name="lastname"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
@@ -156,6 +197,7 @@
                 >Email</label
               >
               <input
+                bind:value={user.email}
                 name="email"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
@@ -168,6 +210,7 @@
                 >Password</label
               >
               <input
+                bind:value={user.password}
                 name="password"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
@@ -175,12 +218,13 @@
 
             <div>
               <label
-                for="password"
+                for="re-password"
                 class="mb-2 inline-block text-sm text-gray-800 sm:text-base"
                 >Re-Password</label
               >
               <input
-                name="password"
+                bind:value={rePassword}
+                name="re-password"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
@@ -229,7 +273,7 @@
                 id="picture"
                 type="file"
                 name="picture"
-                accept="image/*"
+                accept="image/png, image/jpeg, image/jpg, image/heic"
                 class="file-input w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
                 on:change={handleFileChange}
               />
