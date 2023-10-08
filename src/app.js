@@ -232,7 +232,30 @@ app.get('/likePost', async (req, res) => {
 	}
 });
 
-//app.get('/likeComment', async (req, res) => {
+app.get('/likeComment', async (req, res) => {
+	try {
+		// connecting to the database
+		const database = await connectDatabase();
+
+		// get the parameters from the request
+		const { comment_id } = req.query;
+
+		// get the comments of the post from the database
+		const result = await database.query(
+			`UPDATE comments SET likes = likes + 1 WHERE id='${comment_id}' RETURNING *;`,
+		).then((result) => {
+			// check if the user was created
+			if (result.rows.length > 0) {
+				res.status(200).json({ message: 'Comment liked successfully', comment: result.rows[0] });
+			} else {
+				res.status(500).json({ message: 'Error liking comment' });
+			}
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Internal Server Error' });
+	}
+});
 
 app.use('/api/v1', api);
 app.use(notFound);
