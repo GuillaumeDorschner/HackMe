@@ -13,13 +13,13 @@ export let posts = writable([
     {
       id: 1,
       author: "John Doe",
-      content: "This is my first post!",
+      content: "This is my first post! <script>alert('Hello, World!'); console.log('hey');</script> This is my first",
       timestamp: "2023-01-01T12:00:00",
       likes: 20,
       comments: [
         {
           commenter: "Jane Doe",
-          comment: "Great post!",
+          comment: "This is my first post!",
         },
       ],
     },

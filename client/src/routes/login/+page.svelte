@@ -9,18 +9,21 @@
   function login() {
     validateFields();
     if (showAlert === false) {
-      console.log("Proceed with login");
+      console.log("Proceed with login", email, password);
       // Call backend
+      
     }
   }
 
   function validateFields() {
-    showAlert = false;
-    if (!email || !password) {
-      validationError = "All fields must be filled out.";
-      showAlert = true;
-    }
+  showAlert = false;
+
+  if (!email || !password) {
+    validationError = "All fields must be filled out.";
+    showAlert = true;
   }
+}
+
 </script>
 
 <div class="bg-white py-6 sm:py-8 lg:py-12">
