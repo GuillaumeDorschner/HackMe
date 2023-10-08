@@ -273,7 +273,6 @@
                 id="picture"
                 type="file"
                 name="picture"
-                accept="image/png, image/jpeg, image/jpg, image/heic"
                 class="file-input w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
                 on:change={handleFileChange}
               />
