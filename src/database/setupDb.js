@@ -1,14 +1,14 @@
 const { Client } = require('pg');
-//require('dotenv').config();
+require('dotenv').config();
 
 const createDatabase = async () => {
   // Create a client for database creation
   const rootClient = new Client({
-    host: 'localhost',
-    port: 5432,
-    user: "postgres",
-    password: "your_password",
-    database: 'postgres' // default database
+    host: process.env.HOST_DATABASE,
+    port: process.env.PORT_DATABASE,
+    user: process.env.USER_DATABASE,
+    password: process.env.PASSWORD_DATABASE, 
+    database: process.env.BIG_DATABASE
   });
 
   await rootClient.connect();
@@ -24,11 +24,11 @@ const createDatabase = async () => {
 
   // Create a client for the new database
   const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: 'your_password',
-    database: databaseName
+    host: process.env.HOST_DATABASE,
+    port: process.env.PORT_DATABASE,
+    user: process.env.USER_DATABASE,
+    password: process.env.PASSWORD_DATABASE, 
+    database: process.env.DATABASE
   });
 
   await client.connect();

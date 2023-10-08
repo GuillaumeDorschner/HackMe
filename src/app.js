@@ -2,15 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { Client } = require('pg');
+require('dotenv').config();
 
 const connectDatabase = async () => {
 	// Create a client for database creation
 	const rootClient = new Client({
-	  host: 'localhost',
-	  port: 5432,
-	  user: "postgres",
-	  password: "your_password",
-	  database: 'hackme'
+		host: process.env.HOST_DATABASE,
+		port: process.env.PORT_DATABASE,
+		user: process.env.USER_DATABASE,
+		password: process.env.PASSWORD_DATABASE, 
+		database: process.env.DATABASE
 	});
 
     rootClient.connect();
@@ -72,6 +73,14 @@ app.post('/signup', async (req, res) => {
 		if (!password || !email || !firstname || !lastname) {
 			res.status(400).json({ message: 'Invalid Request' });
 			// stop the execution if the username or password is missing
+			return;
+		}
+
+		// verify if the email has a good syntax
+		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		if (!emailRegex.test(email)) {
+			res.status(400).json({ message: 'Invalid email syntax' });
+			// stop the execution if the email is invalid
 			return;
 		}
 
