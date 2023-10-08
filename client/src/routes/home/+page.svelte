@@ -1,6 +1,7 @@
 <script>
   import { user, posts } from "../../store/store.js";
   import { get } from 'svelte/store';
+  
   let openedCommentsPostId = 0;
   let newComment = "";
 
@@ -41,6 +42,7 @@
       <span class="mx-2">{$user.firstName} {$user.lastName}</span>
       <img
         src={$user.avatar}
+        loading="lazy"
         alt="User avatar"
         class="mx-2 w-10 h-10 rounded-full"
       />
@@ -67,7 +69,7 @@
         {#each $posts as post (post.id)}
           <li class="mb-4 p-4 rounded border">
             <h2 class="text-lg font-semibold">{post.author}</h2>
-            <p class="text-gray-600">{post.content}</p>
+            <p class="text-gray-600">{@html post.content}</p>
             <button class="mt-2 text-blue-500" on:click={() => addLike(post.id)}>
               Like ({post.likes})
             </button>
@@ -84,7 +86,7 @@
               <ul class="mt-2">
                 {#each post.comments as comment}
                   <li class="text-sm text-gray-500">
-                    {comment.commenter}: {comment.comment}
+                    {comment.commenter}: {@html comment.comment}
                   </li>
                 {/each}
               </ul>
