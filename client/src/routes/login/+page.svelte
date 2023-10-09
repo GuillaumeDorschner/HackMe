@@ -5,26 +5,42 @@
   let password = "";
   let validationError = "";
   let showAlert = false;
+  let backendUrl;
 
-  function login() {
+  onMount(() => {
+    backendUrl = `http://${window.location.hostname}:3001/`;
+  });
+
+  async function login() {
     validateFields();
     if (showAlert === false) {
-      console.log("Proceed with login", email, password);
-      // Call backend
-      
+      try {
+        const response = await fetch(`${backendUrl}login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await response.json();
+        console.log(data);
+        // Gérer la réponse ici.
+      } catch (error) {
+        console.error("Erreur lors de la connexion:", error);
+      }
     }
   }
 
   function validateFields() {
-  showAlert = false;
+    showAlert = false;
 
-  if (!email || !password) {
-    validationError = "All fields must be filled out.";
-    showAlert = true;
+    if (!email || !password) {
+      validationError = "All fields must be filled out.";
+      showAlert = true;
+    }
   }
-}
-
 </script>
+
 
 <div class="bg-white py-6 sm:py-8 lg:py-12">
   <div class="mx-auto max-w-screen-2xl px-4 md:px-8">

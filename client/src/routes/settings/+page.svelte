@@ -1,16 +1,22 @@
 <script>
   import { onMount } from "svelte";
   import "../../app.css";
-  import { user } from '../../store/store.js';
+  import { user } from "../../store/store.js";
 
+  let backendUrl;
+
+  onMount(() => {
+    backendUrl = `http://${window.location.hostname}:3001/`;
+  });
+  
   let showAlert = false;
   let validationError = "";
 
   let userForm = $user;
 
   function updateUser(newData) {
-    user.update(u => {
-      return {...u, ...newData};
+    user.update((u) => {
+      return { ...u, ...newData };
     });
   }
 
@@ -22,19 +28,17 @@
       },
       body: JSON.stringify(userForm),
     })
-    .then((res) => {
-
-      console.log("Changes saved:", userForm);
-      updateUser(userForm);
-    })
-    .catch((err) => {
-      console.error(err);
-      showAlert = true;
-      validationError = err.message || 'Something went wrong';
-    });
+      .then((res) => {
+        console.log("Changes saved:", userForm);
+        updateUser(userForm);
+      })
+      .catch((err) => {
+        console.error(err);
+        showAlert = true;
+        validationError = err.message || "Something went wrong";
+      });
   }
 </script>
-
 
 <div>
   <header class="flex items-center justify-between p-4 border-b blur-effect">

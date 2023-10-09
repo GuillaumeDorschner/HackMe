@@ -1,7 +1,13 @@
 <script>
   import { user, posts } from "../../store/store.js";
-  import { get } from 'svelte/store';
-  
+  import { get } from "svelte/store";
+
+  let backendUrl;
+
+  onMount(() => {
+    backendUrl = `http://${window.location.hostname}:3001/`;
+  });
+
   let openedCommentsPostId = 0;
   let newComment = "";
 
@@ -64,21 +70,23 @@
   <main class="p-4">
     <section class="m-8 w-full max-w-2xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">News Feed</h1>
-  
+
       <ul>
         {#each $posts as post (post.id)}
           <li class="mb-4 p-4 rounded border">
             <h2 class="text-lg font-semibold">{post.author}</h2>
             <p class="text-gray-600">{@html post.content}</p>
-            <button class="mt-2 text-blue-500" on:click={() => addLike(post.id)}>
+            <button
+              class="mt-2 text-blue-500"
+              on:click={() => addLike(post.id)}
+            >
               Like ({post.likes})
             </button>
             <button
               class="mt-2 ml-4 text-blue-500"
               on:click={() =>
-                openedCommentsPostId =
-                  openedCommentsPostId === post.id ? 0 : post.id
-              }
+                (openedCommentsPostId =
+                  openedCommentsPostId === post.id ? 0 : post.id)}
             >
               Commentaires
             </button>
@@ -107,7 +115,7 @@
         {/each}
       </ul>
     </section>
-  </main>  
+  </main>
 </div>
 
 <style>
