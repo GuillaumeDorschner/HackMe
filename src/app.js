@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
-const multer = require('multer');
 const {connectDatabase} = require('./database/setupDb');
 
 const app = express();
@@ -16,17 +15,6 @@ if (process.env.NODE_ENV === 'production') {
 		res.sendFile(path.resolve(__dirname, 'client', 'public', 'index.html'));
 	});
 }
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/') // Destination folder
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname) // Naming file
-    }
-});
-
-const upload = multer({ storage: storage });
 
 app.use(session({
     secret: 'your_secret_key',  // Use a secret key from environment variables in production
@@ -72,7 +60,7 @@ app.post('/login', async (req, res) => {
 	}
 });
 
-app.post('/signup',upload.single('avatar'), async (req, res) => {
+app.post('/signup', async (req, res) => {
     try {
         // connecting to the database
         const database = await connectDatabase();
@@ -95,12 +83,9 @@ app.post('/signup',upload.single('avatar'), async (req, res) => {
 			return;
 		}
 
-		// Get the file path after uploading
-        const avatarPath = req.file ? req.file.path : null;
-
         // insert the user into the database
-        database.query(
-            `INSERT INTO users (password, email, firstname, lastname, avatar_path) VALUES ('${password}', '${email}', '${firstname}', '${lastname}','${avatarPath}') RETURNING *;`,
+        const result = await database.query(
+            `INSERT INTO users (password, email, firstname, lastname) VALUES ('${password}', '${email}', '${firstname}', '${lastname}') RETURNING *;`,
         ).then((result) => {
 			// check if the user was created
 			if (result.rows.length > 0) {
@@ -253,7 +238,7 @@ app.post('/likePost', async (req, res) => {
   
 		// Insert the like into the database without using parameterized query
 		const result = await database.query(
-		  `INSERT INTO Likes (UserID, PostID) VALUES ('${user_id}', '${post_id}') RETURNING *;`
+		  `INSERT INTO Likes (UserID, PostID, CreatedAt) VALUES ('${user_id}', '${post_id}', CURRENT_TIMESTAMP) RETURNING *;`
 		);
   
 		// Check if the like was created
@@ -296,7 +281,7 @@ app.post('/likeComment', async (req, res) => {
   
 		// Insert the like into the database without using parameterized query
 		const result = await database.query(
-		  `INSERT INTO Likes (UserID, CommentID) VALUES ('${user_id}', '${comment_id}') RETURNING *;`
+		  `INSERT INTO Likes (UserID, CommentID, CreatedAt) VALUES ('${user_id}', '${comment_id}', CURRENT_TIMESTAMP) RETURNING *;`
 		);
   
 		// Check if the like was created

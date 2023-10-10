@@ -39,7 +39,7 @@ const createDatabase = async () => {
   const client = await connectDatabase();
 
   // drop all tables
-  //await client.query('DROP TABLE users, posts, comments;');
+  // await client.query('DROP TABLE users, posts, comments;');
 
   // Create tables
    const createUsersTable = ` CREATE TABLE users (
@@ -47,8 +47,7 @@ const createDatabase = async () => {
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL,
-    avatar_path VARCHAR(255)
+    lastname VARCHAR(255) NOT NULL
 );`;
   const createPostsTable = `CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
