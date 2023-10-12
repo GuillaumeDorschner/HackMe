@@ -47,8 +47,8 @@ const createDatabase = async () => {
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL
-    avatar_path VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
+    avatar_path VARCHAR(255) NOT NULL
   );`;
   const createPostsTable = `CREATE TABLE posts (
     id SERIAL PRIMARY KEY,

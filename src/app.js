@@ -192,18 +192,15 @@ app.post('/addComment', async (req, res) => {
 
 app.get('/getPosts', async (req, res) => {
 	try {
-		// connecting to the database
 		const database = await connectDatabase();
 
-		// Use parameterized query to prevent SQL injection
 		const result = await database.query(
-			`SELECT * FROM posts;`,
+			`SELECT * FROM posts ORDER BY DATE DESC;`,
 		).then((result) => {
-			// check if the user was created
 			if (result.rows.length > 0) {
 				res.status(200).json({ message: 'Posts retrieved successfully', posts: result.rows });
 			} else {
-				res.status(500).json({ message: 'Error retrieving posts' });
+				res.status(404).json({ message: 'No posts found' });
 			}
 		});
 	} catch (error) {
@@ -211,6 +208,7 @@ app.get('/getPosts', async (req, res) => {
 		res.status(500).json({ message: 'Internal Server Error' });
 	}
 });
+
 
 app.get('/getComments', async (req, res) => {
 	try {

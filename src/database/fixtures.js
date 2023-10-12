@@ -1,17 +1,17 @@
 const { Client } = require('pg');
 require('dotenv').config();
-const { connectDatabase } = require('./database/setupDb');
+const {connectDatabase} = require('./setupDb');
 
 const seedDatabase = async () => {
     const client = await connectDatabase();
 
     const insertUsers = `
-        INSERT INTO users (password, email, firstname, lastname)
+        INSERT INTO users (password, email, firstname, lastname, avatar_path)
         VALUES
         ('password1', 'john.doe@example.com', 'John', 'Doe', 'https://thispersondoesnotexist.com/'),
         ('password2', 'jane.doe@example.com', 'Jane', 'Doe', 'https://thispersondoesnotexist.com/'),
         ('password3', 'will.smith@example.com', 'Will', 'Smith', 'https://thispersondoesnotexist.com/'),
-        ('password4', 'sarah.connor@example.com', 'Sarah', 'Connor')
+        ('password4', 'sarah.connor@example.com', 'Sarah', 'Connor', 'https://thispersondoesnotexist.com/'),
         ('password5', 'mary.jane@example.com', 'Mary', 'Jane', 'https://thispersondoesnotexist.com/'),
         ('password6', 'tony.stark@example.com', 'Tony', 'Stark', 'https://thispersondoesnotexist.com/'),
         ('password7', 'peter.parker@example.com', 'Peter', 'Parker', 'https://thispersondoesnotexist.com/'),
@@ -20,17 +20,17 @@ const seedDatabase = async () => {
     await client.query(insertUsers);
 
     const insertPosts = `
-        INSERT INTO posts (user_id, title, content)
+        INSERT INTO posts (user_id, title, content, DATE)
         VALUES
-        (1, 'My First Post', 'This is my first post content'),
-        (1, 'My Second Post', 'This is my second post content'),
-        (2, 'Jane''s Thoughts', 'Random musings'),
-        (3, 'Tech Tips', 'Some useful tech tips'),
-        (4, 'Nature Love', 'Why we should love nature'),
-        (5, 'The Importance of Sleep', 'Sleep is crucial for health'),
-        (6, 'My New Invention', 'I just invented something cool'),
-        (7, 'My Photography Journey', 'How I got into photography'),
-        (8, 'Batman vs Superman', 'Who would win?');
+        (1, 'My First Post', 'This is my first post content', '2023-10-01 08:00:00'),
+        (1, 'My Second Post', 'This is my second post content', '2023-10-02 09:00:00'),
+        (2, 'Jane''s Thoughts', 'Random musings', '2023-10-03 10:00:00'),
+        (3, 'Tech Tips', 'Some useful tech tips', '2023-10-04 11:00:00'),
+        (4, 'Nature Love', 'Why we should love nature', '2023-10-05 12:00:00'),
+        (5, 'The Importance of Sleep', 'Sleep is crucial for health', '2023-10-06 13:00:00'),
+        (6, 'My New Invention', 'I just invented something cool', '2023-10-07 14:00:00'),
+        (7, 'My Photography Journey', 'How I got into photography', '2023-10-08 15:00:00'),
+        (8, 'Batman vs Superman', 'Who would win?', '2023-10-09 16:00:00');
     `;
     await client.query(insertPosts);
 
