@@ -9,7 +9,7 @@
   let validationError = "";
   let backendUrl;
 
-  function login() {
+  async function login() {
     validateFields();
     if (!validationError) {
       try {
@@ -47,8 +47,6 @@
       showAlert = false;
     }
   }
-}
-
 </script>
 
 
