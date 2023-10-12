@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/') // Destination folder
+        cb(null, 'src/uploads/') // Destination folder
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname) // Naming file
@@ -97,6 +97,7 @@ app.post('/signup',upload.single('avatar'), async (req, res) => {
 
 		// Get the file path after uploading
         const avatarPath = req.file ? req.file.path : null;
+		console.log(avatarPath);
 
         // insert the user into the database
         database.query(

@@ -8,14 +8,14 @@ const seedDatabase = async () => {
     const insertUsers = `
         INSERT INTO users (password, email, firstname, lastname)
         VALUES
-        ('password1', 'john.doe@example.com', 'John', 'Doe'),
-        ('password2', 'jane.doe@example.com', 'Jane', 'Doe'),
-        ('password3', 'will.smith@example.com', 'Will', 'Smith'),
+        ('password1', 'john.doe@example.com', 'John', 'Doe', 'https://thispersondoesnotexist.com/'),
+        ('password2', 'jane.doe@example.com', 'Jane', 'Doe', 'https://thispersondoesnotexist.com/'),
+        ('password3', 'will.smith@example.com', 'Will', 'Smith', 'https://thispersondoesnotexist.com/'),
         ('password4', 'sarah.connor@example.com', 'Sarah', 'Connor')
-        ('password5', 'mary.jane@example.com', 'Mary', 'Jane'),
-        ('password6', 'tony.stark@example.com', 'Tony', 'Stark'),
-        ('password7', 'peter.parker@example.com', 'Peter', 'Parker'),
-        ('password8', 'bruce.wayne@example.com', 'Bruce', 'Wayne');
+        ('password5', 'mary.jane@example.com', 'Mary', 'Jane', 'https://thispersondoesnotexist.com/'),
+        ('password6', 'tony.stark@example.com', 'Tony', 'Stark', 'https://thispersondoesnotexist.com/'),
+        ('password7', 'peter.parker@example.com', 'Peter', 'Parker', 'https://thispersondoesnotexist.com/'),
+        ('password8', 'bruce.wayne@example.com', 'Bruce', 'Wayne', 'https://thispersondoesnotexist.com/');
     `;
     await client.query(insertUsers);
 
