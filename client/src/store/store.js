@@ -2,11 +2,11 @@ import { writable } from 'svelte/store';
 
 export let user = writable({
   id: 1,
-	firstName: "Guillaume",
-	lastName: "Dorschner",
-	email: "guillaume@example.com",
-	password: "********",
-	avatar: "https://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQdAnprsidzbOSZ4jI1SvcFeIEuFKwBLrILGo8tLCEA4ixMzfxUQfk6onBDhipea4sD",
+	firstName: "",
+	lastName: "",
+	email: "",
+	password: "",
+	avatar_path: "",
 });
 
 export let posts = writable([

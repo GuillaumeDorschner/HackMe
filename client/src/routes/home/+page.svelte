@@ -1,7 +1,35 @@
 <script>
   import { user, posts } from "../../store/store.js";
-  import { get } from 'svelte/store';
-  
+  import { get } from "svelte/store";
+  import { onMount } from "svelte";
+
+  let backendUrl;
+
+  onMount(async () => {
+    backendUrl = `http://${window.location.hostname}:3001/`;
+    await fetchPosts();
+  });
+
+  async function fetchPosts() {
+    try {
+      const response = await fetch(`${backendUrl}getPosts`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      const data = await response.json();
+
+      // Assuming each post object should have a comments array and likes count
+      data.posts.forEach((post) => {
+        post.comments = [];
+        post.likes = 0;
+      });
+      posts.set(data.posts);  // Update the posts store with the array of posts
+      console.log(data)
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+
   let openedCommentsPostId = 0;
   let newComment = "";
 
