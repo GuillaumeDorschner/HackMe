@@ -18,12 +18,11 @@
       }
       const data = await response.json();
 
-      // Assuming each post object should have a comments array and likes count
       data.posts.forEach((post) => {
         post.comments = [];
         post.likes = 0;
       });
-      posts.set(data.posts);  // Update the posts store with the array of posts
+      posts.set(data.posts);
       console.log(data)
     } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
@@ -49,12 +48,22 @@
   }
 
   function addLike(postId) {
-    const postsData = get(posts);
-    const postIndex = postsData.findIndex((post) => post.id === postId);
-    if (postIndex !== -1) {
-      postsData[postIndex].likes += 1;
-      posts.set(postsData);
-    }
+    fetch(`${backendUrl}addLike`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId }),
+    }).then(() => {
+      const postsData = get(posts);
+      const postIndex = postsData.findIndex((post) => post.id === postId);
+      if (postIndex !== -1) {
+        postsData[postIndex].likes += 1;
+        posts.set(postsData);
+      }
+    }).catch((err) => {
+      console.log("Error", err);
+    });
   }
 </script>
 
