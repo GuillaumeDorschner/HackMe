@@ -1,8 +1,11 @@
 <script>
+  import { goto } from "$app/navigation";
+  import { user } from "../../store/store.js";
   import { onMount } from "svelte";
 
   let email = "";
   let password = "";
+  let showAlert = false;
   let validationError = "";
   let showAlert = false;
   let backendUrl;
@@ -13,7 +16,7 @@
 
   async function login() {
     validateFields();
-    if (showAlert === false) {
+    if (!validationError) {
       try {
         const response = await fetch(`${backendUrl}login`, {
           method: "POST",
@@ -22,24 +25,35 @@
           },
           body: JSON.stringify({ email, password }),
         });
+        if (!response.ok) {
+          validationError = "Invalid login credentials";
+          showAlert = true;
+          return;
+        }
         const data = await response.json();
-        console.log(data);
-        // Gérer la réponse ici.
+        goto("/home");
       } catch (error) {
         console.error("Erreur lors de la connexion:", error);
+        validationError = "An error occurred while trying to log in.";
+        showAlert = true;
       }
     }
   }
 
   function validateFields() {
-    showAlert = false;
-
+    validationError = "";
     if (!email || !password) {
       validationError = "All fields must be filled out.";
       showAlert = true;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      validationError = "Invalid email format.";
+      showAlert = true;
+    }else{
+      showAlert = false;
     }
   }
 </script>
+
 
 
 <div class="bg-white py-6 sm:py-8 lg:py-12">

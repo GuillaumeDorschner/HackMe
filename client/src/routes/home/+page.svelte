@@ -1,12 +1,33 @@
 <script>
   import { user, posts } from "../../store/store.js";
   import { get } from "svelte/store";
+  import { onMount } from "svelte";
 
   let backendUrl;
 
-  onMount(() => {
+  onMount(async () => {
     backendUrl = `http://${window.location.hostname}:3001/`;
+    await fetchPosts();
   });
+
+  async function fetchPosts() {
+    try {
+      const response = await fetch(`${backendUrl}getPosts`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      const data = await response.json();
+
+      data.posts.forEach((post) => {
+        post.comments = [];
+        post.likes = 0;
+      });
+      posts.set(data.posts);
+      console.log(data)
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+    }
+}
 
   let openedCommentsPostId = 0;
   let newComment = "";
@@ -27,12 +48,22 @@
   }
 
   function addLike(postId) {
-    const postsData = get(posts);
-    const postIndex = postsData.findIndex((post) => post.id === postId);
-    if (postIndex !== -1) {
-      postsData[postIndex].likes += 1;
-      posts.set(postsData);
-    }
+    fetch(`${backendUrl}addLike`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId }),
+    }).then(() => {
+      const postsData = get(posts);
+      const postIndex = postsData.findIndex((post) => post.id === postId);
+      if (postIndex !== -1) {
+        postsData[postIndex].likes += 1;
+        posts.set(postsData);
+      }
+    }).catch((err) => {
+      console.log("Error", err);
+    });
   }
 </script>
 
@@ -131,8 +162,8 @@
     margin-top: 60px;
   }
   .blur-effect {
-    -webkit-backdrop-filter: blur(15px);
-    backdrop-filter: blur(15px);
-    background-color: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  background: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
   }
 </style>
