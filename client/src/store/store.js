@@ -2,24 +2,24 @@ import { writable } from 'svelte/store';
 
 export let user = writable({
   id: 1,
-	firstName: "Guillaume",
-	lastName: "Dorschner",
-	email: "guillaume@example.com",
-	password: "********",
-	avatar: "https://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQdAnprsidzbOSZ4jI1SvcFeIEuFKwBLrILGo8tLCEA4ixMzfxUQfk6onBDhipea4sD",
+	firstName: "",
+	lastName: "",
+	email: "",
+	password: "",
+	avatar_path: "",
 });
 
 export let posts = writable([
     {
       id: 1,
       author: "John Doe",
-      content: "This is my first post!",
+      content: "This is my first post! This is my first",
       timestamp: "2023-01-01T12:00:00",
       likes: 20,
       comments: [
         {
           commenter: "Jane Doe",
-          comment: "Great post!",
+          comment: "This is my first post!",
         },
       ],
     },

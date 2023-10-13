@@ -7,14 +7,18 @@ Embark on your hacking journey with these simple steps:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/HackMe.git
+git clone https://github.com/GuillaumeDorschner/HackMe.git
 cd HackMe
 ```
 2. Run `npm install && npm run client-install` to install dependencies
 ```bash
 npm install && npm run client-install
 ```
-3. Run `npm run dev` to start the development server
+3. Run `npm run database:init` to setup the database
+```bash
+npm run database:init
+```
+4. Run `npm run dev` to start the development server
 ```bash
 npm run dev
 ```

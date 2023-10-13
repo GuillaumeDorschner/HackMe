@@ -8,8 +8,13 @@
     "start": "node src/index.js",
     "serve:server": "nodemon src/index.js",
     "serve:client": "cd client && npm run dev",
+    "serve:database": "npm run database",
     "dev": "concurrently \"npm run serve:server\" \"npm run serve:client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd client && npm install && npm run build"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd client && npm install && npm run build",
+    "database": "npm run database:reset && npm run database:init && npm run database:fixtures",
+    "database:reset": "node src/database/resetDb.js",
+    "database:init": "node src/database/initDb.js",
+    "database:fixtures": "node src/database/fixtures.js"
   },
   "repository": {
     "type": "git",
@@ -21,9 +26,13 @@
     "body-parser": "^1.20.1",
     "concurrently": "^7.5.0",
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^3.0.1"
   }
 }
