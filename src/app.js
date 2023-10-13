@@ -1,22 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { Client } = require('pg');
-require('dotenv').config();
-
-const connectDatabase = async () => {
-	// Create a client for database creation
-	const rootClient = new Client({
-		host: process.env.HOST_DATABASE,
-		port: process.env.PORT_DATABASE,
-		user: process.env.USER_DATABASE,
-		password: process.env.PASSWORD_DATABASE, 
-		database: process.env.DATABASE
-	});
-
-    rootClient.connect();
-	return rootClient;
-}
+const session = require('express-session');
+const multer = require('multer');
+const {connectDatabase} = require('./database/setupDb');
 
 const app = express();
 
@@ -29,6 +16,28 @@ if (process.env.NODE_ENV === 'production') {
 		res.sendFile(path.resolve(__dirname, 'client', 'public', 'index.html'));
 	});
 }
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'src/uploads/') // Destination folder
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname) // Naming file
+    }
+});
+
+const upload = multer({ storage: storage });
+
+app.use(session({
+    secret: 'your_secret_key',  // Use a secret key from environment variables in production
+    resave: false,  // Forces the session to be saved back to the session store
+    saveUninitialized: false,  // Forces a session that is "uninitialized" to be saved to the store
+    rolling: true,  // Force a cookie to be set on every response, resetting the expiration date
+    cookie: {
+        secure: false,  // Use true in production with HTTPS
+        maxAge: 3600000  // 1 hour of inactivity
+    }
+}));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -50,6 +59,8 @@ app.post('/login', async (req, res) => {
 		.then((result) => {
 			// If the user is found, return the user information
 			if (result.rows.length > 0) {
+				// save the user in the session
+				req.session.user = result.rows[0];
 				res.status(200).json(result.rows);
 			} else {
 				res.status(404).json({ message: 'User not found' });
@@ -61,7 +72,7 @@ app.post('/login', async (req, res) => {
 	}
 });
 
-app.post('/signup', async (req, res) => {
+app.post('/signup',upload.single('avatar'), async (req, res) => {
     try {
         // connecting to the database
         const database = await connectDatabase();
@@ -84,9 +95,13 @@ app.post('/signup', async (req, res) => {
 			return;
 		}
 
+		// Get the file path after uploading
+        const avatarPath = req.file ? req.file.path : null;
+		console.log(avatarPath);
+
         // insert the user into the database
-        const result = await database.query(
-            `INSERT INTO users (password, email, firstname, lastname) VALUES ('${password}', '${email}', '${firstname}', '${lastname}') RETURNING *;`,
+        database.query(
+            `INSERT INTO users (password, email, firstname, lastname, avatar_path) VALUES ('${password}', '${email}', '${firstname}', '${lastname}','${avatarPath}') RETURNING *;`,
         ).then((result) => {
 			// check if the user was created
 			if (result.rows.length > 0) {
@@ -108,29 +123,30 @@ app.post('/signup', async (req, res) => {
 
 app.post('/addPost', async (req, res) => {
 	try {
-		// connecting to the database
-		const database = await connectDatabase();
+		// check if the user is logged in
+		if (req.session.user) {
+			// connecting to the database
+			const database = await connectDatabase();
 
-		// Extract user details from the post request
-		const { email, title, content } = req.body;
+			// Extract user details from the post request
+			const { user_id, title, content } = req.body;
 
-		// getting the user id from the database
-		const user_id = await database.query(
-			`SELECT id FROM users WHERE email='${email}';`,
-		);
 
-		// insert the post into the database
-		const result = await database.query(
-			`INSERT INTO posts (user_id, title, content) VALUES ('${email}', '${title}', '${content}') RETURNING *;`,
-		).then((result) => {
-			// check if the user was created
-			if (result.rows.length > 0) {
-				res.status(200).json({ message: 'Post created successfully', post: result.rows[0] });
-			} else {
-				res.status(500).json({ message: 'Error creating post' });
-			}
-		});
-	} catch (error) {
+			// insert the post into the database
+			const result = await database.query(
+				`INSERT INTO posts (user_id, title, content) VALUES ('${user_id}', '${title}', '${content}') RETURNING *;`,
+			).then((result) => {
+				// check if the user was created
+				if (result.rows.length > 0) {
+					res.status(200).json({ message: 'Post created successfully', post: result.rows[0] });
+				} else {
+					res.status(500).json({ message: 'Error creating post' });
+				}
+			});
+		}
+		else 
+			res.status(401).json({ message: 'You must be logged in to create a post' });
+		} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Internal Server Error' });
 	}
@@ -138,31 +154,36 @@ app.post('/addPost', async (req, res) => {
 
 app.post('/addComment', async (req, res) => {
 	try {
-		// connecting to the database
-		const database = await connectDatabase();
+		// check if the user is logged in
+		if (req.session.user) {
+			// connecting to the database
+			const database = await connectDatabase();
 
-		
-		// Extract user details from the post request
-		const { user_id, post_id, content } = req.body;
+			
+			// Extract user details from the post request
+			const { user_id, post_id, content } = req.body;
 
-		// Verify the user and password are correct from the post request
-		if (!user_id || !post_id || !content) {
-			res.status(400).json({ message: 'Invalid Request' });
-			// stop the execution if the username or password is missing
-			return;
-		}
-
-		// insert the comment into the database
-		const result = await database.query(
-			`INSERT INTO comments (user_id, post_id, content) VALUES ('${user_id}', '${post_id}', '${content}') RETURNING *;`,
-		).then((result) => {
-			// check if the user was created
-			if (result.rows.length > 0) {
-				res.status(200).json({ message: 'Comment created successfully', comment: result.rows[0] });
-			} else {
-				res.status(500).json({ message: 'Error creating comment' });
+			// Verify the user and password are correct from the post request
+			if (!user_id || !post_id || !content) {
+				res.status(400).json({ message: 'Invalid Request' });
+				// stop the execution if the username or password is missing
+				return;
 			}
-		});
+
+			// insert the comment into the database
+			const result = await database.query(
+				`INSERT INTO comments (user_id, post_id, content) VALUES ('${user_id}', '${post_id}', '${content}') RETURNING *;`,
+			).then((result) => {
+				// check if the user was created
+				if (result.rows.length > 0) {
+					res.status(200).json({ message: 'Comment created successfully', comment: result.rows[0] });
+				} else {
+					res.status(500).json({ message: 'Error creating comment' });
+				}
+			});
+		}
+		else 
+			res.status(401).json({ message: 'You must be logged in to create a comment' });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Internal Server Error' });
@@ -171,18 +192,15 @@ app.post('/addComment', async (req, res) => {
 
 app.get('/getPosts', async (req, res) => {
 	try {
-		// connecting to the database
 		const database = await connectDatabase();
 
-		// Use parameterized query to prevent SQL injection
 		const result = await database.query(
-			`SELECT * FROM posts;`,
+			`SELECT * FROM posts ORDER BY DATE DESC;`,
 		).then((result) => {
-			// check if the user was created
 			if (result.rows.length > 0) {
 				res.status(200).json({ message: 'Posts retrieved successfully', posts: result.rows });
 			} else {
-				res.status(500).json({ message: 'Error retrieving posts' });
+				res.status(404).json({ message: 'No posts found' });
 			}
 		});
 	} catch (error) {
@@ -190,6 +208,7 @@ app.get('/getPosts', async (req, res) => {
 		res.status(500).json({ message: 'Internal Server Error' });
 	}
 });
+
 
 app.get('/getComments', async (req, res) => {
 	try {
@@ -216,55 +235,108 @@ app.get('/getComments', async (req, res) => {
 	}
 });
 	
-app.get('/likePost', async (req, res) => {
+app.post('/likePost', async (req, res) => {
 	try {
-		// connecting to the database
+	  // Check if the user is logged in
+	  if (req.session.user) {
+		// Extract user details from the post request
+		const { user_id, post_id } = req.body;
+  
+		// Verify the user and post IDs are provided
+		if (!user_id || !post_id) {
+		  return res.status(400).json({ message: 'Invalid Request' });
+		}
+  
+		// Connect to the database
 		const database = await connectDatabase();
-
-		// get the parameters from the request
-		const { post_id } = req.query;
-
-		// get the comments of the post from the database
+  
+		// Insert the like into the database without using parameterized query
 		const result = await database.query(
-			`UPDATE posts SET likes = likes + 1 WHERE id='${post_id}' RETURNING *;`,
-		).then((result) => {
-			// check if the user was created
-			if (result.rows.length > 0) {
-				res.status(200).json({ message: 'Post liked successfully', post: result.rows[0] });
-			} else {
-				res.status(500).json({ message: 'Error liking post' });
-			}
-		});
+		  `INSERT INTO Likes (UserID, PostID) VALUES ('${user_id}', '${post_id}') RETURNING *;`
+		);
+  
+		// Check if the like was created
+		if (result.rows.length > 0) {
+		  return res.status(200).json({ message: 'Like created successfully', like: result.rows[0] });
+		} else {
+		  return res.status(500).json({ message: 'Error creating like' });
+		}
+	  } else {
+		return res.status(401).json({ message: 'You must be logged in to create a like' });
+	  }
 	} catch (error) {
-		console.error(error);
-		res.status(500).json({ message: 'Internal Server Error' });
+	  console.error(error);
+  
+	  // Check if error is due to a unique constraint violation
+	  if (error.code === '23505') {
+		return res.status(400).json({ message: 'User already liked this post' });
+	  }
+  
+	  return res.status(500).json({ message: 'Internal Server Error' });
 	}
+  });
+			
+
+
+app.post('/likeComment', async (req, res) => {
+	try {
+	  // Check if the user is logged in
+	  if (req.session.user) {
+		// Extract user details from the post request
+		const { user_id, comment_id } = req.body;
+  
+		// Verify the user and comment IDs are provided
+		if (!user_id || !comment_id) {
+		  return res.status(400).json({ message: 'Invalid Request' });
+		}
+  
+		// Connect to the database
+		const database = await connectDatabase();
+  
+		// Insert the like into the database without using parameterized query
+		const result = await database.query(
+		  `INSERT INTO Likes (UserID, CommentID) VALUES ('${user_id}', '${comment_id}') RETURNING *;`
+		);
+  
+		// Check if the like was created
+		if (result.rows.length > 0) {
+		  return res.status(200).json({ message: 'Like created successfully', like: result.rows[0] });
+		} else {
+		  return res.status(500).json({ message: 'Error creating like' });
+		}
+	  } else {
+		return res.status(401).json({ message: 'You must be logged in to create a like' });
+	  }
+	} catch (error) {
+	  console.error(error);
+  
+	  // Check if error is due to a unique constraint violation
+	  if (error.code === '23505') {
+		return res.status(400).json({ message: 'User already liked this comment' });
+	  }
+  
+	  return res.status(500).json({ message: 'Internal Server Error' });
+	}
+  });
+				
+
+app.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+        res.clearCookie('connect.sid'); // Clear the session cookie
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
 });
 
-app.get('/likeComment', async (req, res) => {
-	try {
-		// connecting to the database
-		const database = await connectDatabase();
-
-		// get the parameters from the request
-		const { comment_id } = req.query;
-
-		// get the comments of the post from the database
-		const result = await database.query(
-			`UPDATE comments SET likes = likes + 1 WHERE id='${comment_id}' RETURNING *;`,
-		).then((result) => {
-			// check if the user was created
-			if (result.rows.length > 0) {
-				res.status(200).json({ message: 'Comment liked successfully', comment: result.rows[0] });
-			} else {
-				res.status(500).json({ message: 'Error liking comment' });
-			}
-		});
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ message: 'Internal Server Error' });
-	}
+app.get('/current_user', (req, res) => {
+	if (req.session.user) 
+		res.status(200).json({ user: req.session.user });
+	else
+		res.status(401).json({ message: 'Unauthorized' });
 });
+	 
 
 app.use('/api/v1', api);
 app.use(notFound);
