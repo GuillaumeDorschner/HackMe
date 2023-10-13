@@ -7,7 +7,12 @@
   let password = "";
   let showAlert = false;
   let validationError = "";
+  let showAlert = false;
   let backendUrl;
+
+  onMount(() => {
+    backendUrl = `http://${window.location.hostname}:3001/`;
+  });
 
   async function login() {
     validateFields();

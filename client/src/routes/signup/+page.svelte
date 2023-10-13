@@ -4,6 +4,12 @@
   import { fade, fly } from "svelte/transition";
   import { goto } from "$app/navigation";
 
+  let backendUrl;
+
+  onMount(() => {
+    backendUrl = `http://${window.location.hostname}:3001`;
+  });
+
   let step = 1;
   let avatar;
   let rePassword = "********";
@@ -22,6 +28,50 @@
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  async function signup() {
+  if (validateFields()) {
+    console.log("signup request");
+
+    const formData = new FormData();
+    formData.append('email', user.email);
+    formData.append('password', user.password);
+    formData.append('firstname', user.firstName);
+    formData.append('lastname', user.lastName);
+    formData.append('avatar', avatar);
+
+    try {
+      const response = await fetch(`${backendUrl}/signup`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log("signup successful");
+        showAlert = false;
+        goto("/home");
+      } else {
+        const errorData = await response.json();
+        console.log("signup failed:", errorData.error);
+        showAlert = true;
+        validationError = errorData.error || "signup failed";
+      }
+    } catch (error) {
+      console.log("signup request failed:", error);
+      showAlert = true;
+      validationError = "Something went wrong. Please try again later.";
+    }
+  }
+}
+
   async function next() {
     if (validateFields()) {
       console.log("Going to next step...");
@@ -38,55 +88,6 @@
     await sleep(805);
     step = 1;
   }
-
-  function getBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  }
-
-  async function login() {
-    if (validateFields()) {
-      console.log("login request");
-
-      const avatarBase64 = await getBase64(avatar);
-
-      user.avatar = avatarBase64;
-
-      try {
-        const userJson = JSON.stringify(user);
-
-        console.log("User data:", userJson);
-
-        const response = await fetch("/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: userJson,
-        });
-
-        if (response.ok) {
-          console.log("Login successful");
-          showAlert = false;
-          goto("/home");
-        } else {
-          const errorData = await response.json();
-          console.log("Login failed:", errorData.error);
-          showAlert = true;
-          validationError = errorData.error || "Login failed";
-        }
-      } catch (error) {
-        console.log("Login request failed:", error);
-        showAlert = true;
-        validationError = "Something went wrong. Please try again later.";
-      }
-    }
-  }
-
   function handleFileChange(event) {
     avatar = event.target.files[0];
     console.log("File selected:", avatar);
@@ -192,19 +193,6 @@
 
             <div>
               <label
-                for="email"
-                class="mb-2 inline-block text-sm text-gray-800 sm:text-base"
-                >Email</label
-              >
-              <input
-                bind:value={user.email}
-                name="email"
-                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
-              />
-            </div>
-
-            <div>
-              <label
                 for="password"
                 class="mb-2 inline-block text-sm text-gray-800 sm:text-base"
                 >Password</label
@@ -282,7 +270,7 @@
             in:fly={{ x: 20, duration: 800 }}
             out:fade={{ duration: 800 }}
             class="block rounded-lg bg-gray-800 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-gray-700 focus-visible:ring active:bg-gray-600 md:text-base"
-            on:click|preventDefault={login}>Log in</button
+            on:click|preventDefault={signup}>Log in</button
           >
         {/if}
       </div>
