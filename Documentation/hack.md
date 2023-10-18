@@ -1,6 +1,8 @@
 # Essential Web Vulnerabilities
 
 [< Back to Getting Started](../README.md#getting-started)
+
+</br>
 All the vulnerabilities listed below are essential to know when it comes to web security. These vulnerabilities are the most common and are the most likely to be exploited. It is important to know how to prevent these vulnerabilities from being exploited and how to fix them if they are exploited.
 
 - [XSS (Cross-Site Scripting)](xss.md)
