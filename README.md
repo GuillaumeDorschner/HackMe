@@ -1,9 +1,15 @@
 # HackMe 🛡️
-HackME is an interactive web platform designed to offer a safe and legal environment for aspiring ethical hackers to hone their skills. The platform features a range of challenges that simulate real-world vulnerabilities, providing users with the opportunity to explore and exploit these weaknesses in a controlled setting.
+HackME is an interactive web platform designed to offer a safe and legal environment for aspiring ethical hackers to hone their skills.
 
 ## 🚀 Getting Started
 
-Embark on your hacking journey with these simple steps:
+Begin your journey into ethical hacking by deploying HackMe. You have two easy options:
+
+### Using Docker Composer (Recommended)
+Using Docker Compose is the **easiest** way to deploy HackMe. For detailed instructions, see our [Docker Guide](Documentation/docker.md).
+
+### Manual Installation
+Alternatively, you can manually set up HackMe by following these steps:
 
 1. Clone the repository
 ```bash
