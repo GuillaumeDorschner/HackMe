@@ -7,7 +7,6 @@
   let password = "";
   let showAlert = false;
   let validationError = "";
-  let showAlert = false;
   let backendUrl;
 
   onMount(() => {
