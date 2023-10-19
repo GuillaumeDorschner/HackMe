@@ -1,18 +1,7 @@
+const { connectDatabase } = require('./connectionconfigDb');
 const { Client } = require('pg');
 require('dotenv').config();
 
-const connectDatabase = async () => {
-    // Create a client for database creation
-    const rootClient = new Client({
-        host: process.env.HOST_DATABASE,
-        port: process.env.PORT_DATABASE,
-        user: process.env.USER_DATABASE,
-        password: process.env.PASSWORD_DATABASE, 
-        database: process.env.DATABASE
-    });
-    await rootClient.connect();
-    return rootClient;
-}
 
 const createDatabase = async () => {
   
@@ -30,7 +19,6 @@ const createDatabase = async () => {
 
   // Create the database
   await rootClient.query(`CREATE DATABASE hackme;`)
-    .then(() => console.log('Database created successfully'))
     .catch(err => console.error('Error creating database:', err));
 
   await rootClient.end();
@@ -70,10 +58,9 @@ const createDatabase = async () => {
   const createLikes = `CREATE TABLE Likes (
       LikeID SERIAL PRIMARY KEY,
       PostID INTEGER REFERENCES posts(id),
-      CommentID INTEGER REFERENCES comments(id),
       UserID INTEGER REFERENCES users(id),
       CreatedAt TIMESTAMP DEFAULT current_timestamp,
-      UNIQUE(UserID, PostID,CommentID)
+      UNIQUE(UserID, PostID)
   );`;
 
   await client.query(createUsersTable);
@@ -81,11 +68,9 @@ const createDatabase = async () => {
   await client.query(createCommentsTable); 
   await client.query(createLikes);
   
-  await client.end();
+  await client.end().then(() => console.log('Database created successfully'));
 };
 
 
-module.exports = {
-    connectDatabase,
-    createDatabase
-};
+createDatabase()
+.catch(err => console.error(err));

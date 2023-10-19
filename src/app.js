@@ -4,7 +4,7 @@ const path = require('path');
 const session = require('express-session');
 var cookieParser = require('cookie-parser');
 const multer = require('multer');
-const {connectDatabase} = require('./database/setupDb');
+const {connectDatabase} = require('./database/connectionconfigDb');
 
 const app = express();
 
@@ -265,49 +265,6 @@ app.post('/likePost', async (req, res) => {
 	  // Check if error is due to a unique constraint violation
 	  if (error.code === '23505') {
 		return res.status(400).json({ message: 'User already liked this post' });
-	  }
-  
-	  return res.status(500).json({ message: 'Internal Server Error' });
-	}
-  });
-			
-
-
-app.post('/likeComment', async (req, res) => {
-	try {
-	  // Check if the user is logged in
-	  if (req.session.user) {
-		// Extract user details from the post request
-		const { user_id, comment_id } = req.body;
-  
-		// Verify the user and comment IDs are provided
-		if (!user_id || !comment_id) {
-		  return res.status(400).json({ message: 'Invalid Request' });
-		}
-  
-		// Connect to the database
-		const database = await connectDatabase();
-  
-		// Insert the like into the database without using parameterized query
-		const result = await database.query(
-		  `INSERT INTO Likes (UserID, CommentID) VALUES ('${user_id}', '${comment_id}') RETURNING *;`
-		);
-  
-		// Check if the like was created
-		if (result.rows.length > 0) {
-		  return res.status(200).json({ message: 'Like created successfully', like: result.rows[0] });
-		} else {
-		  return res.status(500).json({ message: 'Error creating like' });
-		}
-	  } else {
-		return res.status(401).json({ message: 'You must be logged in to create a like' });
-	  }
-	} catch (error) {
-	  console.error(error);
-  
-	  // Check if error is due to a unique constraint violation
-	  if (error.code === '23505') {
-		return res.status(400).json({ message: 'User already liked this comment' });
 	  }
   
 	  return res.status(500).json({ message: 'Internal Server Error' });

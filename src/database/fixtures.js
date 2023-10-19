@@ -1,6 +1,5 @@
-const { Client } = require('pg');
 require('dotenv').config();
-const {connectDatabase} = require('./setupDb');
+const {connectDatabase} = require('./connectionconfigDb');
 
 const seedDatabase = async () => {
     const client = await connectDatabase();
@@ -52,24 +51,19 @@ const seedDatabase = async () => {
     await client.query(insertComments);
 
     const insertLikes = `
-        INSERT INTO likes (PostID, CommentID, UserID)
+        INSERT INTO likes (PostID, UserID)
         VALUES
-        (1, NULL, 1),
-        (NULL, 1, 2),
-        (2, NULL, 3),
-        (3, NULL, 4),
-        (NULL, 2, 1),
-        (NULL, 3, 2),
-        (4, NULL, 1),
-        (5, NULL, 2),
-        (6, NULL, 4),
-        (NULL, 4, 3),
-        (7, NULL, 5),
-        (8, NULL, 6),
-        (NULL, 5, 5),
-        (NULL, 6, 7),
-        (6, NULL, 8),
-        (7, NULL, 7);
+        (1, 1),
+        (1, 2),
+        (1, 3),
+        (1, 4),
+        (1, 5),
+        (1, 6),
+        (1, 7),
+        (1, 8),
+        (2, 1),
+        (2, 2),
+        (2, 3);
     `;
     await client.query(insertLikes);
 
