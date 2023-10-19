@@ -118,8 +118,9 @@ app.post('/signup',upload.single('avatar'), async (req, res) => {
 
 app.post('/addPost', async (req, res) => {
 	try {
+		const userCookie = req.cookies.user;
 		// check if the user is logged in
-		if (req.session.user) {
+		if (userCookie) {
 			// connecting to the database
 			const database = await connectDatabase();
 
@@ -149,8 +150,9 @@ app.post('/addPost', async (req, res) => {
 
 app.post('/addComment', async (req, res) => {
 	try {
+		const userCookie = req.cookies.user;
 		// check if the user is logged in
-		if (req.session.user) {
+		if (userCookie) {
 			// connecting to the database
 			const database = await connectDatabase();
 
@@ -232,8 +234,9 @@ app.get('/getComments', async (req, res) => {
 	
 app.post('/likePost', async (req, res) => {
 	try {
+		const userCookie = req.cookies.user;
 	  // Check if the user is logged in
-	  if (req.session.user) {
+	  if (userCookie) {
 		// Extract user details from the post request
 		const { user_id, post_id } = req.body;
   
