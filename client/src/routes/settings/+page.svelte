@@ -13,6 +13,7 @@
   let validationError = "";
 
   let userForm = $user;
+  let file;
 
   function updateUser(newData) {
     user.update((u) => {
@@ -20,23 +21,48 @@
     });
   }
 
-  function saveChanges() {
-    fetch("", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userForm),
-    })
-      .then((res) => {
-        console.log("Changes saved:", userForm);
-        updateUser(userForm);
-      })
-      .catch((err) => {
-        console.error(err);
-        showAlert = true;
-        validationError = err.message || "Something went wrong";
+  function handleFileChange(event) {
+    file = event.target.files[0];
+  }
+
+  async function saveChanges() {
+    try {
+      // First, send JSON data
+      const response = await fetch(`${backendUrl}updateUser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userForm),
       });
+      
+      if (!response.ok) {
+        throw new Error("Failed to save changes");
+      }
+
+      // Then, send the image as FormData if it exists
+      if (file) {
+        const formData = new FormData();
+        formData.append('avatar', file, file.name);
+
+        const imgResponse = await fetch(`${backendUrl}updateUserAvatar`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!imgResponse.ok) {
+          throw new Error("Failed to upload image");
+        }
+      }
+
+      console.log("Changes and image upload successful:", userForm);
+      updateUser(userForm);
+
+    } catch (err) {
+      console.error(err);
+      showAlert = true;
+      validationError = err.message || "Something went wrong";
+    }
   }
 </script>
 
@@ -61,7 +87,7 @@
       <h1 class="text-3xl font-bold mb-4">Settings</h1>
 
       <a
-        class="text-blue-500 hover:text-blue-700 inline-flex items-center"
+        class="text-blue-500 hover:text-blue-700 inline-flex items-center mt-12"
         href="/home"
       >
         <svg
@@ -143,16 +169,17 @@
         </div>
 
         <div class="mb-4">
-          <label for="avatar" class="block text-sm font-medium text-gray-600"
-            >Profile Picture URL</label
-          >
+          <label for="avatar" class="block text-sm font-medium text-gray-600">
+            Profile Picture
+          </label>
           <input
             id="avatar"
-            type="text"
-            bind:value={userForm.avatar}
+            type="file"
+            accept="image/*"
+            on:change={handleFileChange}
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
-        </div>
+        </div>        
 
         <div>
           <button type="submit" class="px-4 py-2 rounded bg-primary text-white"
