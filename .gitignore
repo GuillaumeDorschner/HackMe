@@ -1,7 +1,5 @@
 # customs ignore
 
-uploads/*
-
 # Logs
 logs
 *.log
