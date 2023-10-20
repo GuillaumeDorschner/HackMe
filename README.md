@@ -13,6 +13,7 @@ Begin your journey into ethical hacking by deploying HackMe through one of the f
 
 HackMe is built using the following technologies:
 
+- [Svelte Kit](https://kit.svelte.dev/)
 - [Node.js](https://nodejs.org/en/)
 - [Postgres](https://www.postgresql.org/download/)
 
