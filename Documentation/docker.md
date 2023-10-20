@@ -1,73 +1,39 @@
 ## 🐳 Deploying with Docker
 
-Easily deploy HackMe using a pre-built Docker image available on Docker Hub. The app utilizes PostgreSQL on port 5432 and operates on port 3000 for the frontend and port 3001 for the backend.
+Easily deploy HackMe with a pre-built Docker image available on Docker Hub. The app relies on PostgreSQL running on port 5432, while the frontend and backend operate on ports 3000 and 3001, respectively.
 
 ### Prerequisites
 
-⚠️ Ensure that Docker and Docker Compose are installed on your machine.
+⚠️ Make sure Docker and Docker Compose are installed on your machine.
 
 ### Steps
 
-1. **Create a Project Folder**
-   
-    Make a folder named `hackme` and navigate into it:
+1. **Download and Extract ZIP**
+  
+    Download the ZIP file from the [HackMe GitHub repository](). After extracting it, navigate to the `hackme` folder and execute the following commands:
     ```bash
-    mkdir hackme
     cd hackme
+    docker-compose up
     ```
 
-2. **Set Up Docker Compose**
+    PS: Sometimes the command may be `docker compose up`without the dash.
 
-    Create a `docker-compose.yml` file with the following content:
-    ```yaml
-    version: '3.1'
-
-    services:
-      app:
-        image: guillaumedorschner/hackme:latest
-        ports:
-          - "3000:3000"
-          - "3001:3001"
-        depends_on:
-          - db
-        environment:
-          PASSWORD_DATABASE: "hackmepassword"
-          HOST_DATABASE: "db"
-          PORT_DATABASE: "5432"
-          USER_DATABASE: "hackmeuser"
-          BIG_DATABASE: "hackmedb"
-          DATABASE: "hackmedb"
-      db:
-        image: postgres:latest
-        environment:
-          POSTGRES_DB: "hackmedb"
-          POSTGRES_USER: "hackmeuser"
-          POSTGRES_PASSWORD: "hackmepassword"
-        ports:
-          - "5432:5432"
-        volumes:
-          - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-        command: ['bash', '-c', 'curl -o /docker-entrypoint-initdb.d/init.sql https://raw.githubusercontent.com/GuillaumeDorschner/HackMe/main/sql/init.sql && postgres']
-    ```
-
-3. **Run Docker Compose**
+2. **Run Docker Compose**
     ```bash
     docker-compose up
     ```
 
-4. **Stopping and Removing Containers**
-  
-    To halt and remove all running containers as specified in the `docker-compose.yml` file, execute the following command:
+3. **Stopping and Removing Containers**
+
+    To stop and remove all running containers as defined in the `docker-compose.yml` file, execute:
     ```bash
     docker-compose down
     ```
 
-You've successfully deployed HackMe using a Docker image from Docker Hub! Now you can dive into ethical hacking.
-
-Start your journey by hacking the platform [here](Documentation/hack.md).
+Congratulations, you've successfully deployed HackMe using a Docker image from Docker Hub! Dive into the world of ethical hacking by starting [here](Documentation/hack.md).
 
 ---
 
-Embrace the thrill of ethical hacking with HackMe, sharpen your skills, and contribute to a safer digital landscape. Your path to mastering ethical hacking begins now! 🌐✨
+Embrace the excitement of ethical hacking with HackMe. Sharpen your skills and contribute to a safer digital landscape. Your journey to becoming a master ethical hacker starts now! 🌐✨
 
 Created with ❤️ by [ESILV](https://www.esilv.fr/) | [GitHub](https://github.com/GuillaumeDorschner) | [LinkedIn](https://www.linkedin.com/in/guillaume-dorschner/)
