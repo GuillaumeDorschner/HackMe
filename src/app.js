@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
+var cookieParser = require('cookie-parser');
 const multer = require('multer');
 require('dotenv').config();
 
@@ -64,17 +65,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.use(session({
-    secret: 'your_secret_key',  // Use a secret key from environment variables in production
-    resave: false,  // Forces the session to be saved back to the session store
-    saveUninitialized: false,  // Forces a session that is "uninitialized" to be saved to the store
-    rolling: true,  // Force a cookie to be set on every response, resetting the expiration date
-    cookie: {
-        secure: false,  // Use true in production with HTTPS
-        maxAge: 3600000  // 1 hour of inactivity
-    }
-}));
-
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
@@ -96,7 +87,11 @@ app.post('/login', async (req, res) => {
 			// If the user is found, return the user information
 			if (result.rows.length > 0) {
 				// save the user in the session
-				req.session.user = result.rows[0];
+				res.cookie('user', JSON.stringify(user), { 
+                    maxAge: 3600000, // 1 hour
+                    httpOnly: false, // The cookie is accessible via JavaScript 
+                    secure: false, // The cookie will be transmitted over HTTP 
+                });
 				res.status(200).json(result.rows);
 			} else {
 				res.status(404).json({ message: 'User not found' });
@@ -159,8 +154,9 @@ app.post('/signup',upload.single('avatar'), async (req, res) => {
 
 app.post('/addPost', async (req, res) => {
 	try {
+		const userCookie = req.cookies.user;
 		// check if the user is logged in
-		if (req.session.user) {
+		if (userCookie) {
 			// connecting to the database
 			const database = await connectDatabase();
 
@@ -190,8 +186,9 @@ app.post('/addPost', async (req, res) => {
 
 app.post('/addComment', async (req, res) => {
 	try {
+		const userCookie = req.cookies.user;
 		// check if the user is logged in
-		if (req.session.user) {
+		if (userCookie) {
 			// connecting to the database
 			const database = await connectDatabase();
 
@@ -231,7 +228,7 @@ app.get('/getPosts', async (req, res) => {
 		const database = await connectDatabase();
 
 		const result = await database.query(
-			`SELECT * FROM posts ORDER BY DATE DESC;`,
+			`SELECT * FROM posts ORDER BY DATE DESC INNER JOIN users on posts.user_id = users.id;`,
 		).then((result) => {
 			if (result.rows.length > 0) {
 				res.status(200).json({ message: 'Posts retrieved successfully', posts: result.rows });
@@ -273,8 +270,9 @@ app.get('/getComments', async (req, res) => {
 	
 app.post('/likePost', async (req, res) => {
 	try {
+		const userCookie = req.cookies.user;
 	  // Check if the user is logged in
-	  if (req.session.user) {
+	  if (userCookie) {
 		// Extract user details from the post request
 		const { user_id, post_id } = req.body;
   
@@ -311,66 +309,33 @@ app.post('/likePost', async (req, res) => {
 	  return res.status(500).json({ message: 'Internal Server Error' });
 	}
   });
-			
-
-
-app.post('/likeComment', async (req, res) => {
-	try {
-	  // Check if the user is logged in
-	  if (req.session.user) {
-		// Extract user details from the post request
-		const { user_id, comment_id } = req.body;
-  
-		// Verify the user and comment IDs are provided
-		if (!user_id || !comment_id) {
-		  return res.status(400).json({ message: 'Invalid Request' });
-		}
-  
-		// Connect to the database
-		const database = await connectDatabase();
-  
-		// Insert the like into the database without using parameterized query
-		const result = await database.query(
-		  `INSERT INTO Likes (UserID, CommentID) VALUES ('${user_id}', '${comment_id}') RETURNING *;`
-		);
-  
-		// Check if the like was created
-		if (result.rows.length > 0) {
-		  return res.status(200).json({ message: 'Like created successfully', like: result.rows[0] });
-		} else {
-		  return res.status(500).json({ message: 'Error creating like' });
-		}
-	  } else {
-		return res.status(401).json({ message: 'You must be logged in to create a like' });
-	  }
-	} catch (error) {
-	  console.error(error);
-  
-	  // Check if error is due to a unique constraint violation
-	  if (error.code === '23505') {
-		return res.status(400).json({ message: 'User already liked this comment' });
-	  }
-  
-	  return res.status(500).json({ message: 'Internal Server Error' });
-	}
-  });
 				
 
-app.post('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).json({ message: 'Internal Server Error' });
-        }
-        res.clearCookie('connect.sid'); // Clear the session cookie
-        res.status(200).json({ message: 'Logged out successfully' });
-    });
+  app.post('/logout', (req, res) => {
+    // Clear the user cookie; the name 'user' should match the name used when the cookie was set in the login route.
+    res.clearCookie('user'); 
+    // Sending a successful response. In a real-world scenario, additional cleanup or checks might be necessary.
+    res.status(200).json({ message: 'Logged out successfully' });
 });
 
 app.get('/current_user', (req, res) => {
-	if (req.session.user) 
-		res.status(200).json({ user: req.session.user });
-	else
-		res.status(401).json({ message: 'Unauthorized' });
+    // Attempt to retrieve the user data from the cookie instead of the session.
+    // This is insecure because user data is exposed, and cookies can be manipulated on the client-side.
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+        let user;
+        try {
+            user = JSON.parse(userCookie);
+            res.status(200).json({ user: user });
+        } catch (err) {
+            console.error("Error parsing user data", err);
+            res.status(400).json({ message: 'Bad Request - Invalid Cookie Data' });
+        }
+    } else {
+        // No cookie means that the user is not authenticated.
+        res.status(401).json({ message: 'Unauthorized' });
+    }
 });
 	 
 

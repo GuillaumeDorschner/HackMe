@@ -13,7 +13,7 @@
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd client && npm install && npm run build",
     "database": "npm run database:reset && npm run database:init && npm run database:fixtures",
     "database:reset": "node src/database/resetDb.js",
-    "database:init": "node src/database/initDb.js",
+    "database:init": "node src/database/setupDb.js",
     "database:fixtures": "node src/database/fixtures.js"
   },
   "repository": {
