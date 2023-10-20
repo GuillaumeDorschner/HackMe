@@ -10,18 +10,21 @@ Easily deploy HackMe with a pre-built Docker image available on Docker Hub. The 
 
 1. **Download and Extract ZIP**
   
-    Download the ZIP with docker-compose and init.sql is [here](https://github.com/GuillaumeDorschner/HackMe/releases/download/docker-compose/hackme.zip). After extracting it, navigate to the `hackme` folder and execute the following commands:
+    Download the ZIP with docker-compose and init.sql is [here](https://github.com/GuillaumeDorschner/HackMe/releases/download/docker-compose/hackme.zip).
+    
+
+2. **Run Docker Compose**
+
+    After extracting it, navigate to the `hackme` folder and execute the following commands:
     ```bash
     cd hackme
     docker-compose up
     ```
 
-    PS: Sometimes the command may be `docker compose up`without the dash.
-
-2. **Run Docker Compose**
-    ```bash
-    docker-compose up
-    ```
+    PS: Sometimes the command may be `docker compose up` without the dash.
+    </br>
+    Congratulations 🎉, you've successfully deployed HackMe using a Docker image from Docker Hub! Dive into the world of ethical hacking by starting --> [here](Documentation/hack.md).
+    </br>
 
 3. **Stopping and Removing Containers**
 
@@ -29,8 +32,6 @@ Easily deploy HackMe with a pre-built Docker image available on Docker Hub. The 
     ```bash
     docker-compose down
     ```
-
-Congratulations, you've successfully deployed HackMe using a Docker image from Docker Hub! Dive into the world of ethical hacking by starting [here](Documentation/hack.md).
 
 ---
 
