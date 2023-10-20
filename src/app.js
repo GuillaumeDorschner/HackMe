@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const session = require('express-session');
 var cookieParser = require('cookie-parser');
 const multer = require('multer');
 const {connectDatabase} = require('./database/connectionconfigDb');
@@ -51,7 +50,7 @@ app.post('/login', async (req, res) => {
 			// If the user is found, return the user information
 			if (result.rows.length > 0) {
 				// save the user in the session
-				res.cookie('user', JSON.stringify(user), { 
+				res.cookie('user', JSON.stringify(result.rows), { 
                     maxAge: 3600000, // 1 hour
                     httpOnly: false, // The cookie is accessible via JavaScript 
                     secure: false, // The cookie will be transmitted over HTTP 
@@ -282,7 +281,7 @@ app.post('/likePost', async (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 });
 
-app.get('/current_user', (req, res) => {
+app.get('/currentuser', (req, res) => {
     // Attempt to retrieve the user data from the cookie instead of the session.
     // This is insecure because user data is exposed, and cookies can be manipulated on the client-side.
     const userCookie = req.cookies.user;

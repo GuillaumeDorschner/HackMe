@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+require('dotenv').config();
 
 const connectDatabase = async () => {
     // Create a client for database creation
