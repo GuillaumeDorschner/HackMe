@@ -10,7 +10,7 @@ Easily deploy HackMe with a pre-built Docker image available on Docker Hub. The 
 
 1. **Download and Extract ZIP**
   
-    Download the ZIP file from the [HackMe GitHub repository](). After extracting it, navigate to the `hackme` folder and execute the following commands:
+    Download the ZIP with docker-compose and init.sql is [here](https://github.com/GuillaumeDorschner/HackMe/releases/download/docker-compose/hackme.zip). After extracting it, navigate to the `hackme` folder and execute the following commands:
     ```bash
     cd hackme
     docker-compose up
