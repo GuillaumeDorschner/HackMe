@@ -3,45 +3,11 @@ const cors = require('cors');
 const path = require('path');
 var cookieParser = require('cookie-parser');
 const multer = require('multer');
-require('dotenv').config();
-
-
-const { Client } = require('pg');
-
-const connectDatabase = async () => {
-  // Read configuration from environment variables
-  const dbHost = process.env.HOST_DATABASE || 'localhost';
-  const dbPort = process.env.PORT_DATABASE || 5432;
-  const dbUser = process.env.USER_DATABASE || 'root';
-  const dbPassword = process.env.PASSWORD_DATABASE || 'rootpassword';
-  const dbName = process.env.DATABASE || 'my_database';
-
-  // Create a client for database connection
-  const rootClient = new Client({
-    host: dbHost,
-    port: dbPort,
-    user: dbUser,
-    password: dbPassword,
-    database: dbName
-  });
-
-  try {
-	await rootClient.connect();
-	console.log('Connected to the database successfully!');
-	return rootClient;
-} catch (err) {
-	console.error('Failed to connect to the database:', err);
-	return null;
-}
-};
-
-// Call the function to connect to the database
-connectDatabase();
-
-
-
+const {connectDatabase} = require('./database/connectionconfigDb');
 
 const app = express();
+
+
 
 const api = require('./api');
 const { notFound, errorHandler } = require('./middlewares/errors.middleware');
@@ -77,7 +43,8 @@ app.post('/login', async (req, res) => {
 			// stop the execution if the username or password is missing
 			return;
 		}
-		// connecting to the database
+
+		// connect to the database
 		database = await connectDatabase();
 		// Verify the user and password are correct from the post request
 		// verify the user exists in the request
@@ -104,9 +71,6 @@ app.post('/login', async (req, res) => {
 
 app.post('/signup',upload.single('avatar'), async (req, res) => {
     try {
-        // connecting to the database
-        const database = await connectDatabase();
-
         // Extract user details from the post request
         const { password, email, firstname, lastname } = req.body;
 
@@ -127,8 +91,9 @@ app.post('/signup',upload.single('avatar'), async (req, res) => {
 
 		// Get the file path after uploading
         const avatarPath = req.file ? req.file.path : null;
-		console.log(avatarPath);
 
+		// connect to the database
+		database = await connectDatabase();
         // insert the user into the database
         database.query(
             `INSERT INTO users (password, email, firstname, lastname, avatar_path) VALUES ('${password}', '${email}', '${firstname}', '${lastname}','${avatarPath}') RETURNING *;`,
@@ -156,13 +121,13 @@ app.post('/addPost', async (req, res) => {
 		const userCookie = req.cookies.user;
 		// check if the user is logged in
 		if (userCookie) {
-			// connecting to the database
-			const database = await connectDatabase();
 
 			// Extract user details from the post request
 			const { user_id, title, content } = req.body;
 
 
+			// connect to the database
+			database = await connectDatabase();
 			// insert the post into the database
 			const result = await database.query(
 				`INSERT INTO posts (user_id, title, content) VALUES ('${user_id}', '${title}', '${content}') RETURNING *;`,
@@ -188,10 +153,6 @@ app.post('/addComment', async (req, res) => {
 		const userCookie = req.cookies.user;
 		// check if the user is logged in
 		if (userCookie) {
-			// connecting to the database
-			const database = await connectDatabase();
-
-			
 			// Extract user details from the post request
 			const { user_id, post_id, content } = req.body;
 
@@ -202,6 +163,8 @@ app.post('/addComment', async (req, res) => {
 				return;
 			}
 
+			// connect to the database
+			database = await connectDatabase();
 			// insert the comment into the database
 			const result = await database.query(
 				`INSERT INTO comments (user_id, post_id, content) VALUES ('${user_id}', '${post_id}', '${content}') RETURNING *;`,
@@ -224,10 +187,12 @@ app.post('/addComment', async (req, res) => {
 
 app.get('/getPosts', async (req, res) => {
 	try {
-		const database = await connectDatabase();
 
+		// connect to the database
+		database = await connectDatabase();
+		
 		const result = await database.query(
-			`SELECT * FROM posts ORDER BY DATE DESC INNER JOIN users on posts.user_id = users.id;`,
+			`SELECT * FROM posts INNER JOIN users on posts.user_id = users.id ORDER BY DATE DESC;`,
 		).then((result) => {
 			if (result.rows.length > 0) {
 				res.status(200).json({ message: 'Posts retrieved successfully', posts: result.rows });
@@ -244,12 +209,12 @@ app.get('/getPosts', async (req, res) => {
 
 app.get('/getComments', async (req, res) => {
 	try {
-		// connecting to the database
-		const database = await connectDatabase();
 
 		// get the parameters from the request
 		const { post_id } = req.query;
 
+		// connect to the database
+		database = await connectDatabase();
 		// get the comments of the post from the database
 		const result = await database.query(
 			`SELECT * FROM comments WHERE post_id='${post_id}';`,
@@ -279,13 +244,11 @@ app.post('/likePost', async (req, res) => {
 		if (!user_id || !post_id) {
 		  return res.status(400).json({ message: 'Invalid Request' });
 		}
-  
-		// Connect to the database
-		const database = await connectDatabase();
-  
+		// connect to the database
+		database = await connectDatabase();
 		// Insert the like into the database without using parameterized query
 		const result = await database.query(
-		  `INSERT INTO Likes (UserID, PostID) VALUES ('${user_id}', '${post_id}') RETURNING *;`
+		  `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
 		);
   
 		// Check if the like was created

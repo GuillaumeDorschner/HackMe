@@ -56,11 +56,10 @@ const createDatabase = async () => {
     DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );`;
   const createLikes = `CREATE TABLE Likes (
-      LikeID SERIAL PRIMARY KEY,
-      PostID INTEGER REFERENCES posts(id),
-      UserID INTEGER REFERENCES users(id),
-      CreatedAt TIMESTAMP DEFAULT current_timestamp,
-      UNIQUE(UserID, PostID)
+      id SERIAL PRIMARY KEY,
+      post_id INTEGER REFERENCES posts(id),
+      user_id INTEGER REFERENCES users(id),
+      UNIQUE(user_id, post_id)
   );`;
 
   await client.query(createUsersTable);
