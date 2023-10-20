@@ -22,7 +22,11 @@
         post.comments = [];
         post.likes = 0;
       });
-      posts.set(data.posts);
+      posts.set(data.posts.map(post => ({
+        ...post,
+        comments: [],
+        likes: 0
+      })));
       console.log(data)
     } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
@@ -78,7 +82,7 @@
     <div class="flex items-center">
       <span class="mx-2">{$user.firstName} {$user.lastName}</span>
       <img
-        src={$user.avatar}
+        src={$user.avatar_path}
         loading="lazy"
         alt="User avatar"
         class="mx-2 w-10 h-10 rounded-full"
@@ -105,20 +109,16 @@
       <ul>
         {#each $posts as post (post.id)}
           <li class="mb-4 p-4 rounded border">
-            <h2 class="text-lg font-semibold">{post.author}</h2>
+            <div class="flex items-center">
+              <img src="https://thispersondoesnotexist.com/" alt="Author avatar" class="w-10 h-10 rounded-full mr-4"/>
+              <h2 class="text-lg font-semibold">{post.title}</h2>
+              <span class="ml-4">{post.author.firstname} {post.author.lastname}</span>
+            </div>
             <p class="text-gray-600">{@html post.content}</p>
-            <button
-              class="mt-2 text-blue-500"
-              on:click={() => addLike(post.id)}
-            >
+            <button class="mt-2 text-blue-500" on:click={() => addLike(post.id)}>
               Like ({post.likes})
             </button>
-            <button
-              class="mt-2 ml-4 text-blue-500"
-              on:click={() =>
-                (openedCommentsPostId =
-                  openedCommentsPostId === post.id ? 0 : post.id)}
-            >
+            <button class="mt-2 ml-4 text-blue-500" on:click={() => (openedCommentsPostId = openedCommentsPostId === post.id ? 0 : post.id)}>
               Commentaires
             </button>
             {#if openedCommentsPostId === post.id}
@@ -129,16 +129,8 @@
                   </li>
                 {/each}
               </ul>
-              <input
-                class="mt-2 p-2 rounded border"
-                type="text"
-                placeholder="Add a comment..."
-                bind:value={newComment}
-              />
-              <button
-                class="mt-2 ml-2 text-blue-500"
-                on:click={() => addComment(post.id)}
-              >
+              <input class="mt-2 p-2 rounded border" type="text" placeholder="Add a comment..." bind:value={newComment}/>
+              <button class="mt-2 ml-2 text-blue-500" on:click={() => addComment(post.id)}>
                 Add
               </button>
             {/if}
