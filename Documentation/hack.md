@@ -1,22 +1,31 @@
-# Essential Vulnerabilities Present in the Website:
+# Essential Web Vulnerabilities
 
-- [ ]  XSS (Cross-Site Scripting)
-- [ ]  RAFI (Remote File Inclusion)
-- [ ]  Remote File Insertion
-- [ ]  CSRF (Cross-Site Request Forgery)
-- [ ]  SQL Injection
-- [ ]  Session Hijacking
+[< Back to Getting Started](../README.md#getting-started)
 
-# Bonus:
+All the vulnerabilities listed below are essential to know when it comes to web security. These vulnerabilities are the most common and are the most likely to be exploited. It is important to know how to prevent these vulnerabilities from being exploited and how to fix them if they are exploited.
 
-- [ ]  HTTP
-    
-    Wireshark for sniffing passwords, usernames, and data
-    
-- [ ]  Lack of Rate Limiting (DDoS)
-    
-    Looping through the site with multiple computers (or even renting servers to crash the site)
-    
-- [ ]  No Logging
-- [ ]  Execution of Malicious Files
-- [ ]  Metadata Not Removed (e.g., profile picture geolocation)
+- [XSS (Cross-Site Scripting)](xss.md)
+  - *Injecting malicious scripts into web pages viewed by other users.*
+- [RAFI (Remote File Inclusion)](rafi.md)
+  - *Exploiting scripts to include files located on remote servers.*
+- [Remote File Insertion](remote-file-insertion.md)
+  - *Inserting malicious files into web applications.*
+- [CSRF (Cross-Site Request Forgery)](csrf.md)
+  - *Unauthorized commands are transmitted from a user the website trusts.*
+- [SQL Injection](sql-injection.md)
+  - *Inserting or "injecting" an SQL query via the input data from the client to the application.*
+- [Session Hijacking](session-hijacking.md)
+  - *Illegally gaining access to another user's web session.*
+
+## Bonus Vulnerabilities
+
+- [HTTP](http.md)
+  - *Utilize Wireshark for sniffing passwords, usernames, and other sensitive data.*
+- [Lack of Rate Limiting (DDoS)](lack-of-rate-limiting.md)
+  - *Potentially looping through the site with multiple computers or renting servers to crash the site.*
+- [No Logging](no-logging.md)
+  - *Absence of event logging, making malicious activities difficult to trace.*
+- [Execution of Malicious Files](execution-of-malicious-files.md)
+  - *Running harmful files, potentially affecting the system or network.*
+- [Metadata Not Removed](metadata-not-removed.md)
+  - *For example, not removing geolocation data from profile pictures.*
