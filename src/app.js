@@ -3,7 +3,42 @@ const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
 const multer = require('multer');
-const {connectDatabase} = require('./database/setupDb');
+
+
+
+const { Client } = require('pg');
+
+const connectDatabase = async () => {
+  // Read configuration from environment variables
+  const dbHost = process.env.DB_HOST || 'localhost';
+  const dbPort = process.env.DB_PORT || 5432;
+  const dbUser = process.env.DB_USER || 'root';
+  const dbPassword = process.env.DB_PASSWORD || 'rootpassword';
+  const dbName = process.env.DB_NAME || 'my_database';
+
+  // Create a client for database connection
+  const rootClient = new Client({
+    host: dbHost,
+    port: dbPort,
+    user: dbUser,
+    password: dbPassword,
+    database: dbName
+  });
+
+  try {
+    // Connect to the database
+    await rootClient.connect();
+    console.log('Connected to the database successfully!');
+  } catch (err) {
+    console.error('Failed to connect to the database:', err);
+  }
+};
+
+// Call the function to connect to the database
+connectDatabase();
+
+
+
 
 const app = express();
 
