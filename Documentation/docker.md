@@ -45,6 +45,9 @@ Easily deploy HackMe using a pre-built Docker image available on Docker Hub. The
           POSTGRES_PASSWORD: "hackmepassword"
         ports:
           - "5432:5432"
+        volumes:
+          - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        command: ['bash', '-c', 'curl -o /docker-entrypoint-initdb.d/init.sql https://raw.githubusercontent.com/GuillaumeDorschner/HackMe/main/sql/init.sql && postgres']
     ```
 
 3. **Run Docker Compose**
