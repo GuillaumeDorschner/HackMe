@@ -105,14 +105,16 @@
   <main class="p-4">
     <section class="m-8 w-full max-w-2xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">News Feed</h1>
-
+  
       <ul>
         {#each $posts as post (post.id)}
           <li class="mb-4 p-4 rounded border">
-            <div class="flex items-center">
+            <div class="flex items-center mb-2">
               <img src="https://thispersondoesnotexist.com/" alt="Author avatar" class="w-10 h-10 rounded-full mr-4"/>
-              <h2 class="text-lg font-semibold">{post.title}</h2>
-              <span class="ml-4">{post.firstname} {post.lastname}</span>
+              <div>
+                <h2 class="text-lg font-semibold">{post.title}</h2>
+                <span class="text-sm text-gray-400">by {post.firstname} {post.lastname}</span>
+              </div>
             </div>
             <p class="text-gray-600">{@html post.content}</p>
             <button class="mt-2 text-blue-500" on:click={() => addLike(post.id)}>
@@ -139,6 +141,7 @@
       </ul>
     </section>
   </main>
+  
 </div>
 
 <style>
