@@ -20,7 +20,6 @@ const connectDatabase = async () => {
   
     try {
       await rootClient.connect();
-      console.log('Connected to the database successfully!');
       return rootClient;
   } catch (err) {
       console.error('Failed to connect to the database:', err);
