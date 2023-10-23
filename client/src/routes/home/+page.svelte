@@ -112,7 +112,7 @@
             <div class="flex items-center">
               <img src="https://thispersondoesnotexist.com/" alt="Author avatar" class="w-10 h-10 rounded-full mr-4"/>
               <h2 class="text-lg font-semibold">{post.title}</h2>
-              <span class="ml-4">{post.author.firstname} {post.author.lastname}</span>
+              <span class="ml-4">{post.firstname} {post.lastname}</span>
             </div>
             <p class="text-gray-600">{@html post.content}</p>
             <button class="mt-2 text-blue-500" on:click={() => addLike(post.id)}>
