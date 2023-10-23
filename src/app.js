@@ -194,8 +194,9 @@ app.get('/getPosts', async (req, res) => {
 		const query = `
 			SELECT posts.id as id, 
 			       users.firstname as firstName,
-				   users.lastname as lastName, 
+				   users.lastname as lastName,
 			       posts.content,
+				   posts.title,
 			       posts.DATE as timestamp 
 			FROM posts 
 			INNER JOIN users on posts.user_id = users.id 
