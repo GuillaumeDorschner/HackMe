@@ -48,7 +48,7 @@ app.post('/login', async (req, res) => {
 		database = await connectDatabase();
 		// Verify the user and password are correct from the post request
 		// verify the user exists in the request
-		database.query(`SELECT * FROM users WHERE email='${email}' AND password='${password}';`)
+		database.query(`SELECT id,email,firstname,lastname,avatar_path FROM users WHERE email='${email}' AND password='${password}';`)
 		.then((result) => {
 			// If the user is found, return the user information
 			if (result.rows.length > 0) {
@@ -123,8 +123,8 @@ app.post('/addPost', async (req, res) => {
 		if (userCookie) {
 
 			// Extract user details from the post request
-			const { user_id, title, content } = req.body;
-
+			const { title, content } = req.body;
+			const user_id = userCookie[0].id;
 
 			// connect to the database
 			database = await connectDatabase();
@@ -154,10 +154,11 @@ app.post('/addComment', async (req, res) => {
 		// check if the user is logged in
 		if (userCookie) {
 			// Extract user details from the post request
-			const { user_id, post_id, content } = req.body;
+			const { post_id, content } = req.body;
+			const user_id = userCookie[0].id;
 
 			// Verify the user and password are correct from the post request
-			if (!user_id || !post_id || !content) {
+			if (!post_id || !content) {
 				res.status(400).json({ message: 'Invalid Request' });
 				// stop the execution if the username or password is missing
 				return;
@@ -190,7 +191,7 @@ app.get('/getPosts', async (req, res) => {
 
 		// connect to the database
 		database = await connectDatabase();
-		
+
 		const result = await database.query(
 			`SELECT * FROM posts INNER JOIN users on posts.user_id = users.id ORDER BY DATE DESC;`,
 		).then((result) => {
@@ -238,10 +239,12 @@ app.post('/likePost', async (req, res) => {
 	  // Check if the user is logged in
 	  if (userCookie) {
 		// Extract user details from the post request
-		const { user_id, post_id } = req.body;
-  
+		const { post_id } = req.body;
+		const user_id = userCookie[0].id;
+
+
 		// Verify the user and post IDs are provided
-		if (!user_id || !post_id) {
+		if (!post_id) {
 		  return res.status(400).json({ message: 'Invalid Request' });
 		}
 		// connect to the database
