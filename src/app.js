@@ -42,29 +42,32 @@ app.post("/login", async (req, res) => {
       return;
     }
 
-		// connect to the database
-		database = await connectDatabase();
-		// Verify the user and password are correct from the post request
-		// verify the user exists in the request
-		database.query(`SELECT id,email,firstname,lastname,avatar_path FROM users WHERE email='${email}' AND password='${password}';`)
-		.then((result) => {
-			// If the user is found, return the user information
-			if (result.rows.length > 0) {
-				// save the user in the session
-				res.cookie('user', JSON.stringify(result.rows), { 
-                    maxAge: 3600000, // 1 hour
-                    httpOnly: false, // The cookie is accessible via JavaScript 
-                    secure: false, // The cookie will be transmitted over HTTP 
-                });
-				res.status(200).json(result.rows);
-			} else {
-				res.status(404).json({ message: 'User not found' });
-			}
-		});
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ message: 'Internal Server Error' });
-	}
+    // connect to the database
+    database = await connectDatabase();
+    // Verify the user and password are correct from the post request
+    // verify the user exists in the request
+    database
+      .query(
+        `SELECT id,email,firstname,lastname,avatar_path FROM users WHERE email='${email}' AND password='${password}';`
+      )
+      .then((result) => {
+        // If the user is found, return the user information
+        if (result.rows.length > 0) {
+          // save the user in the session
+          res.cookie("user", JSON.stringify(result.rows), {
+            maxAge: 3600000, // 1 hour
+            httpOnly: false, // The cookie is accessible via JavaScript
+            secure: false, // The cookie will be transmitted over HTTP
+          });
+          res.status(200).json(result.rows);
+        } else {
+          res.status(404).json({ message: "User not found" });
+        }
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 app.post("/signup", upload.single("avatar"), async (req, res) => {
@@ -115,7 +118,9 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
           httpOnly: false,
           secure: false,
         });
-        res.status(200).json({ message: "User created successfully", user: result.rows[0] });
+        res
+          .status(200)
+          .json({ message: "User created successfully", user: result.rows[0] });
       } else {
         res.status(500).json({ message: "Error creating user" });
       }
@@ -135,49 +140,54 @@ app.post("/addPost", async (req, res) => {
     // check if the user is logged in
     if (userCookie) {
       // Extract user details from the post request
-      const { user_id, title, content } = req.body;
+      const { title, content } = req.body;
+      const user_id = userCookie[0].id;
 
-			// Extract user details from the post request
-			const { title, content } = req.body;
-			const user_id = userCookie[0].id;
-
-			// connect to the database
-			database = await connectDatabase();
-			// insert the post into the database
-			const result = await database.query(
-				`INSERT INTO posts (user_id, title, content) VALUES ('${user_id}', '${title}', '${content}') RETURNING *;`,
-			).then((result) => {
-				// check if the user was created
-				if (result.rows.length > 0) {
-					res.status(200).json({ message: 'Post created successfully', post: result.rows[0] });
-				} else {
-					res.status(500).json({ message: 'Error creating post' });
-				}
-			});
-		}
-		else 
-			res.status(401).json({ message: 'You must be logged in to create a post' });
-		} catch (error) {
-		console.error(error);
-		res.status(500).json({ message: 'Internal Server Error' });
-	}
+      // connect to the database
+      database = await connectDatabase();
+      // insert the post into the database
+      const result = await database
+        .query(
+          `INSERT INTO posts (user_id, title, content) VALUES ('${user_id}', '${title}', '${content}') RETURNING *;`
+        )
+        .then((result) => {
+          // check if the user was created
+          if (result.rows.length > 0) {
+            res
+              .status(200)
+              .json({
+                message: "Post created successfully",
+                post: result.rows[0],
+              });
+          } else {
+            res.status(500).json({ message: "Error creating post" });
+          }
+        });
+    } else
+      res
+        .status(401)
+        .json({ message: "You must be logged in to create a post" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
-app.post('/addComment', async (req, res) => {
-	try {
-		const userCookie = req.cookies.user;
-		// check if the user is logged in
-		if (userCookie) {
-			// Extract user details from the post request
-			const { post_id, content } = req.body;
-			const user_id = userCookie[0].id;
+app.post("/addComment", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+    // check if the user is logged in
+    if (userCookie) {
+      // Extract user details from the post request
+      const { post_id, content } = req.body;
+      const user_id = userCookie[0].id;
 
-			// Verify the user and password are correct from the post request
-			if (!post_id || !content) {
-				res.status(400).json({ message: 'Invalid Request' });
-				// stop the execution if the username or password is missing
-				return;
-			}
+      // Verify the user and password are correct from the post request
+      if (!post_id || !content) {
+        res.status(400).json({ message: "Invalid Request" });
+        // stop the execution if the username or password is missing
+        return;
+      }
 
       // connect to the database
       database = await connectDatabase();
@@ -189,12 +199,10 @@ app.post('/addComment', async (req, res) => {
         .then((result) => {
           // check if the user was created
           if (result.rows.length > 0) {
-            res
-              .status(200)
-              .json({
-                message: "Comment created successfully",
-                comment: result.rows[0],
-              });
+            res.status(200).json({
+              message: "Comment created successfully",
+              comment: result.rows[0],
+            });
           } else {
             res.status(500).json({ message: "Error creating comment" });
           }
@@ -228,12 +236,10 @@ app.get("/getPosts", async (req, res) => {
 
     const result = await database.query(query).then((result) => {
       if (result.rows.length > 0) {
-        res
-          .status(200)
-          .json({
-            message: "Posts retrieved successfully",
-            posts: result.rows,
-          });
+        res.status(200).json({
+          message: "Posts retrieved successfully",
+          posts: result.rows,
+        });
       } else {
         res.status(404).json({ message: "No posts found" });
       }
@@ -257,12 +263,10 @@ app.get("/getComments", async (req, res) => {
       .then((result) => {
         // check if the user was created
         if (result.rows.length > 0) {
-          res
-            .status(200)
-            .json({
-              message: "Comments retrieved successfully",
-              comments: result.rows,
-            });
+          res.status(200).json({
+            message: "Comments retrieved successfully",
+            comments: result.rows,
+          });
         } else {
           res.status(500).json({ message: "Error retrieving comments" });
         }
@@ -316,49 +320,51 @@ app.post("/likePost", async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
-	
-app.post('/likePost', async (req, res) => {
-	try {
-		const userCookie = req.cookies.user;
-	  // Check if the user is logged in
-	  if (userCookie) {
-		// Extract user details from the post request
-		const { post_id } = req.body;
-		const user_id = userCookie[0].id;
 
+app.post("/likePost", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+    // Check if the user is logged in
+    if (userCookie) {
+      // Extract user details from the post request
+      const { post_id } = req.body;
+      const user_id = userCookie[0].id;
 
-		// Verify the user and post IDs are provided
-		if (!post_id) {
-		  return res.status(400).json({ message: 'Invalid Request' });
-		}
-		// connect to the database
-		database = await connectDatabase();
-		// Insert the like into the database without using parameterized query
-		const result = await database.query(
-		  `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
-		);
-  
-		// Check if the like was created
-		if (result.rows.length > 0) {
-		  return res.status(200).json({ message: 'Like created successfully', like: result.rows[0] });
-		} else {
-		  return res.status(500).json({ message: 'Error creating like' });
-		}
-	  } else {
-		return res.status(401).json({ message: 'You must be logged in to create a like' });
-	  }
-	} catch (error) {
-	  console.error(error);
-  
-	  // Check if error is due to a unique constraint violation
-	  if (error.code === '23505') {
-		return res.status(400).json({ message: 'User already liked this post' });
-	  }
-  
-	  return res.status(500).json({ message: 'Internal Server Error' });
-	}
-  });
-				
+      // Verify the user and post IDs are provided
+      if (!post_id) {
+        return res.status(400).json({ message: "Invalid Request" });
+      }
+      // connect to the database
+      database = await connectDatabase();
+      // Insert the like into the database without using parameterized query
+      const result = await database.query(
+        `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
+      );
+
+      // Check if the like was created
+      if (result.rows.length > 0) {
+        return res
+          .status(200)
+          .json({ message: "Like created successfully", like: result.rows[0] });
+      } else {
+        return res.status(500).json({ message: "Error creating like" });
+      }
+    } else {
+      return res
+        .status(401)
+        .json({ message: "You must be logged in to create a like" });
+    }
+  } catch (error) {
+    console.error(error);
+
+    // Check if error is due to a unique constraint violation
+    if (error.code === "23505") {
+      return res.status(400).json({ message: "User already liked this post" });
+    }
+
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 app.post("/logout", (req, res) => {
   // Clear the user cookie; the name 'user' should match the name used when the cookie was set in the login route.
