@@ -60,12 +60,13 @@
         goto("/home");
       } else {
         const errorData = await response.json();
-        console.log("signup failed:", errorData.error);
+        console.log("signup failed:", errorData.message);
         showAlert = true;
-        validationError = errorData.error || "signup failed";
+        validationError = errorData.message || "signup failed";
       }
     } catch (error) {
       console.log("signup request failed:", error);
+      console.log(error);
       showAlert = true;
       validationError = "Something went wrong. Please try again later.";
     }
