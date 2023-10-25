@@ -378,27 +378,27 @@
           class="mb-2 h-24 w-24 overflow-hidden rounded-full bg-gray-200 shadow-lg md:mb-4 md:h-32 md:w-32"
         >
           <img
-            src="/person/fatima.jpeg"
+            src="/person/vivien.png"
+            alt="Vivien Deblock"
             loading="lazy"
-            alt="Fatima-Zahra Bekraoui"
             class="h-full w-full object-cover object-center"
           />
         </div>
 
         <div>
           <div class="text-center font-bold text-primary md:text-lg">
-            Fatima-Zahra Bekraoui
+            Vivien Deblock
           </div>
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            Rapporteur
+            Communications Manager
           </p>
 
           <div class="flex justify-center">
             <div class="flex gap-4">
               <a
-                href="https://www.linkedin.com/in/fatima-zahra-bekraoui-342505210/"
+                href="https://www.linkedin.com/in/vivien-deblock-36162222b/"
                 target="_blank"
                 class="text-gray-400 transition duration-100 hover:text-gray-500 active:text-gray-600"
               >
@@ -472,27 +472,27 @@
           class="mb-2 h-24 w-24 overflow-hidden rounded-full bg-gray-200 shadow-lg md:mb-4 md:h-32 md:w-32"
         >
           <img
-            src="/person/vivien.png"
-            alt="Vivien Deblock"
+            src="/person/fatima.jpeg"
             loading="lazy"
+            alt="Fatima-Zahra Bekraoui"
             class="h-full w-full object-cover object-center"
           />
         </div>
 
         <div>
           <div class="text-center font-bold text-primary md:text-lg">
-            Vivien Deblock
+            Fatima-Zahra Bekraoui
           </div>
           <p
             class="mb-3 text-center text-sm text-gray-500 md:mb-4 md:text-base"
           >
-            Communications Manager
+            Rapporteur
           </p>
 
           <div class="flex justify-center">
             <div class="flex gap-4">
               <a
-                href="https://www.linkedin.com/in/vivien-deblock-36162222b/"
+                href="https://www.linkedin.com/in/fatima-zahra-bekraoui-342505210/"
                 target="_blank"
                 class="text-gray-400 transition duration-100 hover:text-gray-500 active:text-gray-600"
               >
