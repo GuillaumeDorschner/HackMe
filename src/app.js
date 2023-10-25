@@ -192,9 +192,19 @@ app.get('/getPosts', async (req, res) => {
 		// connect to the database
 		database = await connectDatabase();
 
-		const result = await database.query(
-			`SELECT * FROM posts INNER JOIN users on posts.user_id = users.id ORDER BY DATE DESC;`,
-		).then((result) => {
+		const query = `
+			SELECT posts.id as id, 
+			       users.firstname as firstName,
+				   users.lastname as lastName,
+			       posts.content,
+				   posts.title,
+			       posts.DATE as timestamp 
+			FROM posts 
+			INNER JOIN users on posts.user_id = users.id 
+			ORDER BY DATE DESC;
+		`;
+		
+		const result = await database.query(query).then((result) => {
 			if (result.rows.length > 0) {
 				res.status(200).json({ message: 'Posts retrieved successfully', posts: result.rows });
 			} else {
