@@ -2,6 +2,7 @@
   import { user, posts } from "../../store/store.js";
   import { get } from "svelte/store";
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
 
   let backendUrl;
 
@@ -10,11 +11,32 @@
     await fetchPosts();
   });
 
+  async function logout() {
+    try {
+      const response = await fetch(`${backendUrl}logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      const responseData = await response.json();
+      console.log(responseData.message); // Logged out successfully
+      user.set({}); // Réinitialiser le store user
+      goto("/login");
+    } catch (error) {
+      console.error(
+        "There has been a problem with your fetch operation:",
+        error
+      );
+    }
+  }
+
   async function fetchPosts() {
     try {
       const response = await fetch(`${backendUrl}getPosts`);
       if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
+        throw new Error("Network response was not ok " + response.statusText);
       }
       const data = await response.json();
 
@@ -22,16 +44,21 @@
         post.comments = [];
         post.likes = 0;
       });
-      posts.set(data.posts.map(post => ({
-        ...post,
-        comments: [],
-        likes: 0
-      })));
-      console.log(data)
+      posts.set(
+        data.posts.map((post) => ({
+          ...post,
+          comments: [],
+          likes: 0,
+        }))
+      );
+      console.log(data);
     } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
+      console.error(
+        "There has been a problem with your fetch operation:",
+        error
+      );
     }
-}
+  }
 
   let openedCommentsPostId = 0;
   let newComment = "";
@@ -58,16 +85,18 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ postId }),
-    }).then(() => {
-      const postsData = get(posts);
-      const postIndex = postsData.findIndex((post) => post.id === postId);
-      if (postIndex !== -1) {
-        postsData[postIndex].likes += 1;
-        posts.set(postsData);
-      }
-    }).catch((err) => {
-      console.log("Error", err);
-    });
+    })
+      .then(() => {
+        const postsData = get(posts);
+        const postIndex = postsData.findIndex((post) => post.id === postId);
+        if (postIndex !== -1) {
+          postsData[postIndex].likes += 1;
+          posts.set(postsData);
+        }
+      })
+      .catch((err) => {
+        console.log("Error", err);
+      });
   }
 </script>
 
@@ -99,28 +128,48 @@
           >Write a Blog</a
         >
       </div>
+      <button
+        class="ml-2 px-4 py-2 rounded bg-primary text-white"
+        on:click={logout}
+      >
+        Logout
+      </button>
     </div>
   </header>
 
   <main class="p-4">
     <section class="m-8 w-full max-w-2xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">News Feed</h1>
-  
+
       <ul>
         {#each $posts as post (post.id)}
           <li class="mb-4 p-4 rounded border">
             <div class="flex items-center mb-2">
-              <img src="https://thispersondoesnotexist.com/" alt="Author avatar" class="w-10 h-10 rounded-full mr-4"/>
+              <img
+                src="https://thispersondoesnotexist.com/"
+                alt="Author avatar"
+                class="w-10 h-10 rounded-full mr-4"
+              />
               <div>
                 <h2 class="text-lg font-semibold">{post.title}</h2>
-                <span class="text-sm text-gray-400">by {post.firstname} {post.lastname}</span>
+                <span class="text-sm text-gray-400"
+                  >by {post.firstname} {post.lastname}</span
+                >
               </div>
             </div>
             <p class="text-gray-600">{@html post.content}</p>
-            <button class="mt-2 text-blue-500" on:click={() => addLike(post.id)}>
+            <button
+              class="mt-2 text-blue-500"
+              on:click={() => addLike(post.id)}
+            >
               Like ({post.likes})
             </button>
-            <button class="mt-2 ml-4 text-blue-500" on:click={() => (openedCommentsPostId = openedCommentsPostId === post.id ? 0 : post.id)}>
+            <button
+              class="mt-2 ml-4 text-blue-500"
+              on:click={() =>
+                (openedCommentsPostId =
+                  openedCommentsPostId === post.id ? 0 : post.id)}
+            >
               Commentaires
             </button>
             {#if openedCommentsPostId === post.id}
@@ -131,8 +180,16 @@
                   </li>
                 {/each}
               </ul>
-              <input class="mt-2 p-2 rounded border" type="text" placeholder="Add a comment..." bind:value={newComment}/>
-              <button class="mt-2 ml-2 text-blue-500" on:click={() => addComment(post.id)}>
+              <input
+                class="mt-2 p-2 rounded border"
+                type="text"
+                placeholder="Add a comment..."
+                bind:value={newComment}
+              />
+              <button
+                class="mt-2 ml-2 text-blue-500"
+                on:click={() => addComment(post.id)}
+              >
                 Add
               </button>
             {/if}
@@ -141,7 +198,6 @@
       </ul>
     </section>
   </main>
-  
 </div>
 
 <style>
@@ -157,8 +213,12 @@
     margin-top: 60px;
   }
   .blur-effect {
-  -webkit-backdrop-filter: blur(15px);
-  backdrop-filter: blur(15px);
-  background: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 1)
+    );
   }
 </style>
