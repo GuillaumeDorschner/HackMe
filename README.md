@@ -9,6 +9,10 @@ Begin your journey into ethical hacking by deploying HackMe through one of the f
 - [Deploy with Docker](Documentation/installation/docker.md) [recommended]
 - [Manual Installation](Documentation/installation/manual.md)
 
+## 🧙🏻 Hacking
+
+The Hack section is [there](Documentation/hack.md)
+
 ## 🛠️ Developer's Corner
 
 HackMe is built using the following technologies:
