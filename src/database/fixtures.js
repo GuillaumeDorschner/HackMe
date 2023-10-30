@@ -1,6 +1,5 @@
-const { Client } = require('pg');
 require('dotenv').config();
-const {connectDatabase} = require('./setupDb');
+const {connectDatabase} = require('./connectionconfigDb');
 
 const seedDatabase = async () => {
     const client = await connectDatabase();
@@ -8,14 +7,14 @@ const seedDatabase = async () => {
     const insertUsers = `
         INSERT INTO users (password, email, firstname, lastname, avatar_path)
         VALUES
-        ('password1', 'john.doe@example.com', 'John', 'Doe', 'https://thispersondoesnotexist.com/'),
-        ('password2', 'jane.doe@example.com', 'Jane', 'Doe', 'https://thispersondoesnotexist.com/'),
-        ('password3', 'will.smith@example.com', 'Will', 'Smith', 'https://thispersondoesnotexist.com/'),
-        ('password4', 'sarah.connor@example.com', 'Sarah', 'Connor', 'https://thispersondoesnotexist.com/'),
-        ('password5', 'mary.jane@example.com', 'Mary', 'Jane', 'https://thispersondoesnotexist.com/'),
-        ('password6', 'tony.stark@example.com', 'Tony', 'Stark', 'https://thispersondoesnotexist.com/'),
-        ('password7', 'peter.parker@example.com', 'Peter', 'Parker', 'https://thispersondoesnotexist.com/'),
-        ('password8', 'bruce.wayne@example.com', 'Bruce', 'Wayne', 'https://thispersondoesnotexist.com/');
+        ('password1', 'john.doe@example.com', 'John', 'Doe', '/src/uploads/eren_avatar.jpg'),
+        ('password2', 'jane.doe@example.com', 'Jane', 'Doe', '/src/uploads/eren_avatar.jpg'),
+        ('password3', 'will.smith@example.com', 'Will', 'Smith', '/src/uploads/eren_avatar.jpg'),
+        ('password4', 'sarah.connor@example.com', 'Sarah', 'Connor', '/src/uploads/eren_avatar.jpg'),
+        ('password5', 'mary.jane@example.com', 'Mary', 'Jane', '/src/uploads/eren_avatar.jpg'),
+        ('password6', 'tony.stark@example.com', 'Tony', 'Stark', '/src/uploads/eren_avatar.jpg'),
+        ('password7', 'peter.parker@example.com', 'Peter', 'Parker', '/src/uploads/eren_avatar.jpg'),
+        ('password8', 'bruce.wayne@example.com', 'Bruce', 'Wayne', '/src/uploads/eren_avatar.jpg');
     `;
     await client.query(insertUsers);
 
@@ -52,24 +51,24 @@ const seedDatabase = async () => {
     await client.query(insertComments);
 
     const insertLikes = `
-        INSERT INTO likes (PostID, CommentID, UserID)
+        INSERT INTO likes (post_id, user_id)
         VALUES
-        (1, NULL, 1),
-        (NULL, 1, 2),
-        (2, NULL, 3),
-        (3, NULL, 4),
-        (NULL, 2, 1),
-        (NULL, 3, 2),
-        (4, NULL, 1),
-        (5, NULL, 2),
-        (6, NULL, 4),
-        (NULL, 4, 3),
-        (7, NULL, 5),
-        (8, NULL, 6),
-        (NULL, 5, 5),
-        (NULL, 6, 7),
-        (6, NULL, 8),
-        (7, NULL, 7);
+        (1, 1),
+        (1, 2),
+        (2, 3),
+        (3, 4),
+        (2, 1),
+        (3, 2),
+        (4, 1),
+        (5, 2),
+        (6, 4),
+        (4, 3),
+        (7, 5),
+        (8, 6),
+        (5, 5),
+        (6, 7),
+        (6, 8),
+        (7, 7);
     `;
     await client.query(insertLikes);
 
