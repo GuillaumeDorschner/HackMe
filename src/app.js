@@ -31,7 +31,16 @@ const upload = multer({ storage: storage });
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  credentials: true,
+  origin: (origin, callback) => {
+      const allowedOrigin = `${origin}`;
+      callback(null, allowedOrigin);
+  }
+};
+
+app.use(cors(corsOptions));
 
 app.post("/login", async (req, res) => {
   try {

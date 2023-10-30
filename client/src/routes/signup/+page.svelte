@@ -51,6 +51,7 @@
     try {
       const response = await fetch(`${backendUrl}/signup`, {
         method: "POST",
+        credentials: "include",
         body: formData,
       });
 
