@@ -1,6 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import "../../app.css";
   import { fade, fly } from "svelte/transition";
   import { goto } from "$app/navigation";
 
@@ -12,16 +11,16 @@
 
   let step = 1;
   let avatar;
-  let rePassword = "********";
+  let rePassword = "";
 
   let validationError = "";
   let showAlert = false;
 
   let user = {
-    firstName: "Guillaume",
-    lastName: "Dorschner",
-    email: "guillaume@example.com",
-    password: "********",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
   };
 
   async function sleep(ms) {
