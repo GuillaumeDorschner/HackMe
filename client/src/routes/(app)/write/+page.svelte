@@ -1,6 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import "../../app.css";
 
   let backendUrl;
 
