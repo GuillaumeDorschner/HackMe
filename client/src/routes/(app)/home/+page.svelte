@@ -79,7 +79,7 @@
   }
 
   function addLike(postId) {
-    fetch(`${backendUrl}addLike`, {
+    fetch(`${backendUrl}likePost`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

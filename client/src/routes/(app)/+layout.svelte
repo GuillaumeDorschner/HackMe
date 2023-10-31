@@ -20,16 +20,16 @@
         alt="User avatar"
         class="mx-2 w-10 h-10 rounded-full"
       />
-      <div class="ml-4 flex">
+      <div class="flex">
         {#if $page.url.pathname != "/home"}
-          <a class="px-4 py-2 rounded bg-primary text-white flex items-center" href="/settings">
+          <a class="m-1 px-4 py-2 rounded bg-primary text-white flex items-center" href="/home">
             <i class="fa-solid fa-house"></i>
           </a>
         {/if}
 
         {#if $page.url.pathname != "/settings"} 
-          <a class="px-4 py-2 rounded bg-primary text-white flex items-center" href="/settings">
-            <img src="/settings-gear.svg" alt="Settings" class="w-6 h-6" />
+          <a class="m-1 px-4 py-2 rounded bg-primary text-white flex items-center" href="/settings">
+            <i class="fa-solid fa-gear"></i>
           </a>
         {/if}
       </div>

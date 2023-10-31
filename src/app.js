@@ -64,7 +64,7 @@ app.post("/login", async (req, res) => {
         if (result.rows.length > 0) {
           // save the user in the session
           res.cookie("user", JSON.stringify(result.rows), {
-            maxAge: 3600000, // 1 hour
+            maxAge: 3600000 * 24,
             httpOnly: false, // The cookie is accessible via JavaScript
             secure: false, // The cookie will be transmitted over HTTP
           });
@@ -123,7 +123,7 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
       // check if the user was created
       if (result.rows.length > 0) {
         res.cookie("user", JSON.stringify(result.rows[0]), {
-          maxAge: 3600000,
+          maxAge: 3600000 * 24,
           httpOnly: false,
           secure: false,
         });
