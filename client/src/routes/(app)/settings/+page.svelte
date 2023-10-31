@@ -1,6 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import "../../app.css";
   import { user } from "../../store/store.js";
 
   let backendUrl;
