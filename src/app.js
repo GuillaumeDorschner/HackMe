@@ -64,7 +64,7 @@ app.post("/login", async (req, res) => {
         if (result.rows.length > 0) {
           // save the user in the session
           res.cookie("user", JSON.stringify(result.rows), {
-            maxAge: 3600000, // 1 hour
+            maxAge: 3600000 * 24,
             httpOnly: false, // The cookie is accessible via JavaScript
             secure: false, // The cookie will be transmitted over HTTP
           });
@@ -123,7 +123,7 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
       // check if the user was created
       if (result.rows.length > 0) {
         res.cookie("user", JSON.stringify(result.rows[0]), {
-          maxAge: 3600000,
+          maxAge: 3600000 * 24,
           httpOnly: false,
           secure: false,
         });
@@ -234,9 +234,11 @@ app.get("/getPosts", async (req, res) => {
     const query = `
 			SELECT posts.id as id, 
 			       users.firstname as firstName,
-				   users.lastname as lastName,
+				     users.lastname as lastName,
+             users.id as user_id,
+             users.avatar_path as avatar_path,
 			       posts.content,
-				   posts.title,
+				     posts.title,
 			       posts.DATE as timestamp 
 			FROM posts 
 			INNER JOIN users on posts.user_id = users.id 
@@ -375,11 +377,23 @@ app.post("/likePost", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.get("/logout", (req, res) => {
   // Clear the user cookie; the name 'user' should match the name used when the cookie was set in the login route.
   res.clearCookie("user");
   // Sending a successful response. In a real-world scenario, additional cleanup or checks might be necessary.
   res.status(200).json({ message: "Logged out successfully" });
+});
+
+app.get("/avatar/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      res.sendFile(path.join(__dirname, `./uploads/${id}`));
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
 });
 
 app.get("/currentuser", (req, res) => {
