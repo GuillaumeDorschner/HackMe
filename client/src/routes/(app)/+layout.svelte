@@ -22,9 +22,7 @@
         throw new Error("Network response was not ok " + response.statusText);
       }
       let data = await response.json();
-      data.user[0].avatar_path = `https://t4.ftcdn.net/jpg/00/97/58/97/360_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg`;
-      
-      console.log(data.user[0]);
+      console.log("data", data);
       user.set(data.user[0]);
     } catch (error) {
       console.error(
@@ -45,7 +43,7 @@
     <div class="flex items-center">
       <span class="mx-2">{$user.firstname} {$user.lastname}</span>
       <img
-        src={$user.avatar_path}
+        src={backendUrl + "avatar/"+ $user.avatar_path}
         loading="lazy"
         alt="User avatar"
         class="mx-2 w-10 h-10 rounded-full"

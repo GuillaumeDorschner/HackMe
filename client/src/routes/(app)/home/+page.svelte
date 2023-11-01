@@ -91,7 +91,7 @@
         <li class="mb-4 p-4 rounded border">
           <div class="flex items-center mb-2">
             <img
-              src="https://thispersondoesnotexist.com/"
+              src={backendUrl + "avatar/" + post.avatar_path}
               alt="Author avatar"
               class="w-10 h-10 rounded-full mr-4"
             />
