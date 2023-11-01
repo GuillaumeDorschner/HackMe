@@ -112,7 +112,8 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
     }
 
     // Get the file path after uploading
-    const avatarPath = req.file ? req.file.path : null;
+    const avatarPath = path.basename(req.file.path);
+    console.log(avatarPath);
 
     try {
       // insert the user into the database
