@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { user } from "../../../store/store.js";
+  import { goto } from "$app/navigation";
 
   let backendUrl;
 
@@ -18,7 +19,6 @@
         throw new Error("Network response was not ok " + response.statusText);
       }
       const responseData = await response.json();
-      console.log(responseData.message); // Logged out successfully
       user.set({}); // Réinitialiser le store user
       goto("/login");
     } catch (error) {
