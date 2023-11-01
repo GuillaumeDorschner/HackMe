@@ -234,9 +234,11 @@ app.get("/getPosts", async (req, res) => {
     const query = `
 			SELECT posts.id as id, 
 			       users.firstname as firstName,
-				   users.lastname as lastName,
+				     users.lastname as lastName,
+             users.id as user_id,
+             users.avatar_path as avatar_path,
 			       posts.content,
-				   posts.title,
+				     posts.title,
 			       posts.DATE as timestamp 
 			FROM posts 
 			INNER JOIN users on posts.user_id = users.id 
@@ -380,6 +382,18 @@ app.get("/logout", (req, res) => {
   res.clearCookie("user");
   // Sending a successful response. In a real-world scenario, additional cleanup or checks might be necessary.
   res.status(200).json({ message: "Logged out successfully" });
+});
+
+app.get("/avatar/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      res.sendFile(path.join(__dirname, `./uploads/${id}`));
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
 });
 
 app.get("/currentuser", (req, res) => {

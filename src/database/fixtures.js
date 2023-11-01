@@ -7,14 +7,14 @@ const seedDatabase = async () => {
     const insertUsers = `
         INSERT INTO users (password, email, firstname, lastname, avatar_path)
         VALUES
-        ('password1', 'john.doe@example.com', 'John', 'Doe', '/src/uploads/eren_avatar.jpg'),
-        ('password2', 'jane.doe@example.com', 'Jane', 'Doe', '/src/uploads/eren_avatar.jpg'),
-        ('password3', 'will.smith@example.com', 'Will', 'Smith', '/src/uploads/eren_avatar.jpg'),
-        ('password4', 'sarah.connor@example.com', 'Sarah', 'Connor', '/src/uploads/eren_avatar.jpg'),
-        ('password5', 'mary.jane@example.com', 'Mary', 'Jane', '/src/uploads/eren_avatar.jpg'),
-        ('password6', 'tony.stark@example.com', 'Tony', 'Stark', '/src/uploads/eren_avatar.jpg'),
-        ('password7', 'peter.parker@example.com', 'Peter', 'Parker', '/src/uploads/eren_avatar.jpg'),
-        ('password8', 'bruce.wayne@example.com', 'Bruce', 'Wayne', '/src/uploads/eren_avatar.jpg');
+        ('password1', 'john.doe@example.com', 'John', 'Doe', 'eren_avatar.jpg'),
+        ('password2', 'jane.doe@example.com', 'Jane', 'Doe', 'eren_avatar.jpg'),
+        ('password3', 'will.smith@example.com', 'Will', 'Smith', 'eren_avatar.jpg'),
+        ('password4', 'sarah.connor@example.com', 'Sarah', 'Connor', 'eren_avatar.jpg'),
+        ('password5', 'mary.jane@example.com', 'Mary', 'Jane', 'eren_avatar.jpg'),
+        ('password6', 'tony.stark@example.com', 'Tony', 'Stark', 'eren_avatar.jpg'),
+        ('password7', 'peter.parker@example.com', 'Peter', 'Parker', 'eren_avatar.jpg'),
+        ('password8', 'bruce.wayne@example.com', 'Bruce', 'Wayne', 'eren_avatar.jpg');
     `;
     await client.query(insertUsers);
 
