@@ -375,7 +375,7 @@ app.post("/likePost", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.get("/logout", (req, res) => {
   // Clear the user cookie; the name 'user' should match the name used when the cookie was set in the login route.
   res.clearCookie("user");
   // Sending a successful response. In a real-world scenario, additional cleanup or checks might be necessary.

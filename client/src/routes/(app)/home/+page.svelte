@@ -11,27 +11,6 @@
     await fetchPosts();
   });
 
-  async function logout() {
-    try {
-      const response = await fetch(`${backendUrl}logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok " + response.statusText);
-      }
-      const responseData = await response.json();
-      console.log(responseData.message); // Logged out successfully
-      user.set({}); // Réinitialiser le store user
-      goto("/login");
-    } catch (error) {
-      console.error(
-        "There has been a problem with your fetch operation:",
-        error
-      );
-    }
-  }
-
   async function fetchPosts() {
     try {
       const response = await fetch(`${backendUrl}getPosts`);
@@ -51,7 +30,6 @@
           likes: 0,
         }))
       );
-      console.log(data);
     } catch (error) {
       console.error(
         "There has been a problem with your fetch operation:",
@@ -69,7 +47,7 @@
     if (postIndex !== -1) {
       const updatedPost = { ...postsData[postIndex] };
       updatedPost.comments.push({
-        commenter: `${get(user).firstName} ${get(user).lastName}`,
+        commenter: `${get(user).firstname} ${get(user).lastname}`,
         comment: newComment,
       });
       postsData[postIndex] = updatedPost;

@@ -11,7 +11,7 @@
   async function logout() {
     try {
       const response = await fetch(`${backendUrl}logout`, {
-        method: "POST",
+        method: "GET",
         credentials: "include",
       });
       if (!response.ok) {
@@ -92,37 +92,25 @@
 
     <form on:submit|preventDefault={saveChanges}>
       <div class="mb-4">
-        <label for="firstName" class="block text-sm font-medium text-gray-600"
-          >First Name</label
+        <label for="firstname" class="block text-sm font-medium text-gray-600"
+          >First name</label
         >
         <input
-          id="firstName"
+          id="firstname"
           type="text"
-          bind:value={userForm.firstName}
+          bind:value={userForm.firstname}
           class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
         />
       </div>
 
       <div class="mb-4">
-        <label for="lastName" class="block text-sm font-medium text-gray-600"
-          >Last Name</label
+        <label for="lastname" class="block text-sm font-medium text-gray-600"
+          >Last name</label
         >
         <input
-          id="lastName"
+          id="lastname"
           type="text"
-          bind:value={userForm.lastName}
-          class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
-        />
-      </div>
-
-      <div class="mb-4">
-        <label for="username" class="block text-sm font-medium text-gray-600"
-          >Username</label
-        >
-        <input
-          id="username"
-          type="text"
-          bind:value={userForm.username}
+          bind:value={userForm.lastname}
           class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
         />
       </div>
@@ -164,10 +152,15 @@
         />
       </div>
 
-      <div>
+      <div class="flex justify-between">
         <button type="submit" class="px-4 py-2 rounded bg-primary text-white"
           >Save Changes</button
         >
+
+        <button
+          type="button"
+          class="px-4 py-2 rounded bg-red-500 text-white"
+          on:click={logout}>Logout</button>
       </div>
 
       {#if showAlert}

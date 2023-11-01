@@ -1,9 +1,9 @@
 import { writable } from 'svelte/store';
 
 export let user = writable({
-  id: 1,
-	firstName: "",
-	lastName: "",
+  id: null,
+	firstname: "",
+	lastname: "",
 	email: "",
 	password: "",
 	avatar_path: "",

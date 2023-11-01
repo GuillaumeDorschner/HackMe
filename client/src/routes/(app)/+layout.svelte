@@ -3,6 +3,36 @@
   import { page } from '$app/stores';
   import { user } from "../../store/store.js";
   import '@fortawesome/fontawesome-free/css/all.min.css'
+  import { onMount } from "svelte";
+
+  let backendUrl;
+
+  onMount(async () => {
+    backendUrl = `http://${window.location.hostname}:3001/`;
+    await fetchUser();
+  });
+
+  async function fetchUser() {
+    try {
+      const response = await fetch(`${backendUrl}currentuser`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      let data = await response.json();
+      data.user[0].avatar_path = `https://t4.ftcdn.net/jpg/00/97/58/97/360_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg`;
+      
+      console.log(data.user[0]);
+      user.set(data.user[0]);
+    } catch (error) {
+      console.error(
+        "There has been a problem with your fetch operation:",
+        error
+      );
+    }
+  }
 </script>
 
 <header class="flex items-center justify-between p-4 border-b blur-effect">
@@ -13,7 +43,7 @@
     </div>
 
     <div class="flex items-center">
-      <span class="mx-2">{$user.firstName} {$user.lastName}</span>
+      <span class="mx-2">{$user.firstname} {$user.lastname}</span>
       <img
         src={$user.avatar_path}
         loading="lazy"
