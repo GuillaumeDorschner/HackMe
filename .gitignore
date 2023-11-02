@@ -1,4 +1,5 @@
 # customs ignore
+.DS_Store
 
 # Logs
 logs
