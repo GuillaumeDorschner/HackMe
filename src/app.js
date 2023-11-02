@@ -144,14 +144,12 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
   }
 });
 
-app.post("/addPost", async (req, res) => {
-  try {
-    const userCookie = req.cookies.user;
-    // check if the user is logged in
-    if (userCookie) {
-      // Extract user details from the post request
-      const { title, content } = req.body;
-      const user_id = userCookie[0].id;
+app.post('/write', async (req, res) => {
+	try {
+		// check if the user is logged in
+		if (req.session.user) {
+			// connecting to the database
+			const database = await connectDatabase();
 
       // connect to the database
       database = await connectDatabase();
