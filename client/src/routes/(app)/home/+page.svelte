@@ -5,6 +5,7 @@
   import { goto } from "$app/navigation";
 
   let backendUrl;
+  let loading = true;
 
   onMount(async () => {
     backendUrl = `http://${window.location.hostname}:3001/`;
@@ -12,25 +13,19 @@
   });
 
   async function fetchPosts() {
+    loading = true;
     try {
-      const response = await fetch(`${backendUrl}getPosts`);
+      const response = await fetch(`${backendUrl}getPosts`,
+      {
+        method: "GET",
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error("Network response was not ok " + response.statusText);
       }
       const data = await response.json();
-
-      data.posts.forEach((post) => {
-        post.comments = [];
-        post.likes = 0;
-      });
-      posts.set(
-        data.posts.map((post) => ({
-          ...post,
-          comments: [],
-          likes: 0,
-        }))
-        );
-        console.log(data.posts);
+      posts.set(data.posts);
+      loading = false;
     } catch (error) {
       console.error(
         "There has been a problem with your fetch operation:",
@@ -114,58 +109,63 @@
       <a class="px-4 py-2 rounded bg-primary text-white" href="/write">Write a Blog</a>
     </div>
     
-
-    <ul>
-      {#each $posts as post (post.id)}
-        <li class="mb-4 p-4 rounded border">
-          <div class="flex items-center mb-2">
-            <img
-              src={backendUrl + "avatar/" + post.avatar_path}
-              alt="Author avatar"
-              class="w-10 h-10 rounded-full mr-4"
-            />
-            <div>
-              <h2 class="text-lg font-semibold">{post.title}</h2>
-              <span class="text-sm text-gray-400"
-                >by {post.firstname} {post.lastname}</span
-              >
+    {#if loading}
+      <div class="text-center py-4">
+          Loading...
+      </div>
+    {:else}
+      <ul>
+        {#each $posts as post (post.post_id)}
+          <li class="mb-4 p-4 rounded border">
+            <div class="flex items-center mb-2">
+              <img
+                src={backendUrl + "avatar/" + post.avatar}
+                alt="Author avatar"
+                class="w-10 h-10 rounded-full mr-4"
+              />
+              <div>
+                <h2 class="text-lg font-semibold">{post.title}</h2>
+                <span class="text-sm text-gray-400"
+                  >by {post.first_name} {post.last_name}</span
+                >
+              </div>
             </div>
-          </div>
-          <p class="text-gray-600">{@html post.content}</p>
-          <button class="mt-2 text-blue-500" on:click={() => addLike(post.id)}>
-            Like ({post.likes})
-          </button>
-          <button
-            class="mt-2 ml-4 text-blue-500"
-            on:click={() =>
-              (openedCommentsPostId =
-                openedCommentsPostId === post.id ? 0 : post.id)}
-          >
-            Commentaires
-          </button>
-          {#if openedCommentsPostId === post.id}
-            <ul class="mt-2">
-              {#each post.comments as comment}
-                <li class="text-sm text-gray-500">
-                  {comment.commenter}: {@html comment.comment}
-                </li>
-              {/each}
-            </ul>
-            <input
-              class="mt-2 p-2 rounded border"
-              type="text"
-              placeholder="Add a comment..."
-              bind:value={newComment}
-            />
-            <button
-              class="mt-2 ml-2 text-blue-500"
-              on:click={() => addComment(post.id)}
-            >
-              Add
+            <p class="text-gray-600">{@html post.content}</p>
+            <button class="mt-2 text-blue-500" on:click={() => addLike(post.post_id)}>
+              Like ({post.like_count})
             </button>
-          {/if}
-        </li>
-      {/each}
-    </ul>
+            <button
+              class="mt-2 ml-4 text-blue-500"
+              on:click={() =>
+                (openedCommentsPostId =
+                  openedCommentsPostId === post.post_id ? 0 : post.post_id)}
+            >
+              Commentaires
+            </button>
+            {#if openedCommentsPostId === post.post_id}
+              <ul class="mt-2">
+                {#each post.comments as comment}
+                  <li class="text-sm text-gray-500">
+                    {comment.first_name} {comment.last_name}: {@html comment.content}
+                  </li>
+                {/each}
+              </ul>
+              <input
+                class="mt-2 p-2 rounded border"
+                type="text"
+                placeholder="Add a comment..."
+                bind:value={newComment}
+              />
+              <button
+                class="mt-2 ml-2 text-blue-500"
+                on:click={() => addComment(post.post_id)}
+              >
+                Add
+              </button>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </section>
 </main>

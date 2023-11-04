@@ -17,8 +17,8 @@
   let showAlert = false;
 
   let user = {
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
   };
@@ -43,8 +43,8 @@
     const formData = new FormData();
     formData.append('email', user.email);
     formData.append('password', user.password);
-    formData.append('firstname', user.firstName);
-    formData.append('lastname', user.lastName);
+    formData.append('first_name', user.first_name);
+    formData.append('last_name', user.last_name);
     formData.append('avatar', avatar);
 
     try {
@@ -100,8 +100,8 @@
     if (step == 1) {
       if (
         !user.email ||
-        !user.firstName ||
-        !user.lastName ||
+        !user.first_name ||
+        !user.last_name ||
         !user.password ||
         !rePassword
       ) {
@@ -168,26 +168,26 @@
 
             <div>
               <label
-                for="firstname"
+                for="first_name"
                 class="mb-2 inline-block text-sm text-gray-800 sm:text-base"
                 >First name</label
               >
               <input
-                bind:value={user.firstName}
-                name="firstname"
+                bind:value={user.first_name}
+                name="first_name"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>
 
             <div>
               <label
-                for="lastname"
+                for="last_name"
                 class="mb-2 inline-block text-sm text-gray-800 sm:text-base"
                 >Last name</label
               >
               <input
-                bind:value={user.lastName}
-                name="lastname"
+                bind:value={user.last_name}
+                name="last_name"
                 class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
               />
             </div>

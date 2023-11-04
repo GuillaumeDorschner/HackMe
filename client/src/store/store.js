@@ -1,25 +1,35 @@
 import { writable } from 'svelte/store';
 
 export let user = writable({
-	id: 0,
-	firstname: "",
-	lastname: "",
+	user_id: null,
+	first_name: "",
+	last_name: "",
 	email: "",
 	password: "",
-	avatar_path: "",
+	avatar: "",
 });
 
 export let posts = writable([
 	{
 		"id": 0,
-		"firstname": "",
-		"lastname": "",
 		"user_id": 0,
-		"avatar_path": "",
-		"content": "",
+		"post_id": 0,
+		"first_name": "",
+		"last_name": "",
+		"avatar": "",
 		"title": "",
+		"content": "",
 		"timestamp": "",
-		"comments": [],
-		"likes": 0,
+		"comments": [
+			{
+				"comment_id": 0,
+				"user_id": 0,
+				"content": "",
+				"created_at": "",
+				"first_name": "",
+				"last_name": "",
+			},
+		],
+		"like_count": 0,
 	}
 ]);

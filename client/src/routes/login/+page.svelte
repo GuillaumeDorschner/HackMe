@@ -3,8 +3,6 @@
   import { user } from "../../store/store.js";
   import { onMount } from "svelte";
 
-  let email = "";
-  let password = "";
   let showAlert = false;
   let validationError = "";
   let backendUrl;
@@ -23,7 +21,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email: $user.email, password: $user.password }),
         });
         if (!response.ok) {
           validationError = "Invalid login credentials";
@@ -42,10 +40,10 @@
 
   function validateFields() {
     validationError = "";
-    if (!email || !password) {
+    if (!$user.email || !$user.password) {
       validationError = "All fields must be filled out.";
       showAlert = true;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!/\S+@\S+\.\S+/.test($user.email)) {
       validationError = "Invalid email format.";
       showAlert = true;
     }else{
@@ -85,7 +83,7 @@
             >Email</label
           >
           <input
-            bind:value={email}
+            bind:value={$user.email}
             name="email"
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
           />
@@ -98,7 +96,7 @@
             >Password</label
           >
           <input
-            bind:value={password}
+            bind:value={$user.password}
             name="password"
             type="password"
             class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
