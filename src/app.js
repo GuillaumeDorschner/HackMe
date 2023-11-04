@@ -4,11 +4,12 @@ const path = require("path");
 var cookieParser = require("cookie-parser");
 const multer = require("multer");
 const { connectDatabase } = require("./database/connectionconfigDb");
+const api = require("./api");
+const { notFound, errorHandler } = require("./middlewares/errors.middleware");
 
 const app = express();
 
-const api = require("./api");
-const { notFound, errorHandler } = require("./middlewares/errors.middleware");
+// ----------------- MIDDLEWARES ----------------- //
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/public"));
@@ -19,10 +20,10 @@ if (process.env.NODE_ENV === "production") {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "src/uploads/"); // Destination folder
+    cb(null, "src/uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname); // Naming file
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
@@ -35,44 +36,39 @@ app.use(express.json());
 const corsOptions = {
   credentials: true,
   origin: (origin, callback) => {
-      const allowedOrigin = `${origin}`;
-      callback(null, allowedOrigin);
-  }
+    const allowedOrigin = `${origin}`;
+    callback(null, allowedOrigin);
+  },
 };
 
 app.use(cors(corsOptions));
+
+// ----------------- USERS ----------------- //
 
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
       res.status(400).json({ message: "Invalid Request" });
-      // stop the execution if the username or password is missing
       return;
     }
 
-    // connect to the database
-    database = await connectDatabase();
-    // Verify the user and password are correct from the post request
-    // verify the user exists in the request
-    database
-      .query(
-        `SELECT id,email,firstname,lastname,avatar_path FROM users WHERE email='${email}' AND password='${password}';`
-      )
-      .then((result) => {
-        // If the user is found, return the user information
-        if (result.rows.length > 0) {
-          // save the user in the session
-          res.cookie("user", JSON.stringify(result.rows), {
-            maxAge: 3600000 * 24,
-            httpOnly: false, // The cookie is accessible via JavaScript
-            secure: false, // The cookie will be transmitted over HTTP
-          });
-          res.status(200).json(result.rows);
-        } else {
-          res.status(404).json({ message: "User not found" });
-        }
+    const database = await connectDatabase();
+
+    const result = await database.query(
+      `SELECT user_id,email,first_name,last_name,avatar FROM users WHERE email='${email}' AND password='${password}';`
+    );
+
+    if (result.rows.length > 0) {
+      res.cookie("user", JSON.stringify(result.rows), {
+        maxAge: 3600000 * 24,
+        httpOnly: false,
+        secure: false,
       });
+      res.status(200).json(result.rows);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -81,28 +77,21 @@ app.post("/login", async (req, res) => {
 
 app.post("/signup", upload.single("avatar"), async (req, res) => {
   try {
-    // Extract user details from the post request
-    const { password, email, firstname, lastname } = req.body;
+    const { password, email, first_name, last_name } = req.body;
 
-    // Verify the user and password are correct from the post request
-    if (!password || !email || !firstname || !lastname) {
+    if (!password || !email || !first_name || !last_name) {
       res.status(400).json({ message: "Invalid Request" });
-      // stop the execution if the username or password is missing
       return;
     }
 
-    // verify if the email has a good syntax
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       res.status(400).json({ message: "Invalid email syntax" });
-      // stop the execution if the email is invalid
       return;
     }
 
-    // connect to the database
     const database = await connectDatabase();
 
-    // Verify the user isn't already signup
     const emailCheckResult = await database.query(
       `SELECT email FROM users WHERE email = '${email}';`
     );
@@ -111,17 +100,95 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ message: "Email already used" });
     }
 
-    // Get the file path after uploading
     const avatarPath = path.basename(req.file.path);
     console.log(avatarPath);
 
+    const result = await database.query(
+      `INSERT INTO users (password, email, first_name, last_name, avatar) VALUES ('${password}', '${email}', '${first_name}', '${last_name}','${avatarPath}') RETURNING *;`
+    );
+
+    if (result.rows.length > 0) {
+      res.cookie("user", JSON.stringify(result.rows[0]), {
+        maxAge: 3600000 * 24,
+        httpOnly: false,
+        secure: false,
+      });
+      res
+        .status(200)
+        .json({ message: "User created successfully", user: result.rows[0] });
+    } else {
+      res.status(500).json({ message: "Error creating user" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.get("/avatar/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    res.sendFile(path.join(__dirname, `./uploads/${id}`));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.get("/currentuser", async (req, res) => {
+  const userCookie = req.cookies.user;
+
+  if (userCookie) {
     try {
-      // insert the user into the database
-      const result = await database.query(
-        `INSERT INTO users (password, email, firstname, lastname, avatar_path) VALUES ('${password}', '${email}', '${firstname}', '${lastname}','${avatarPath}') RETURNING *;`
+      const user = JSON.parse(userCookie);
+      res.status(200).json({ user: user });
+    } catch (err) {
+      console.error("Error parsing user data", err);
+      res.status(400).json({ message: "Bad Request - Invalid Cookie Data" });
+    }
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+});
+
+app.post("/updateUser", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+      const { password, email, first_name, last_name } = req.body;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
+      if (!user_id || !password || !email || !first_name || !last_name) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ message: "Invalid email syntax" });
+        return;
+      }
+
+      const database = await connectDatabase();
+
+      const emailCheckResult = await database.query(
+        `SELECT email FROM users WHERE email = '${email}';`
       );
 
-      // check if the user was created
+      if (emailCheckResult.rows.length > 0) {
+        return res.status(400).json({ message: "Email already used" });
+      }
+
+      const avatarPath = path.basename(req.file.path);
+      console.log(avatarPath);
+
+      const result = await database.query(
+        `UPDATE users SET password = '${password}', email = '${email}', first_name = '${first_name}', last_name = '${last_name}', avatar = '${avatarPath}' WHERE user_id = '${user_id}' RETURNING *;`
+      );
+
       if (result.rows.length > 0) {
         res.cookie("user", JSON.stringify(result.rows[0]), {
           maxAge: 3600000 * 24,
@@ -130,13 +197,12 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
         });
         res
           .status(200)
-          .json({ message: "User created successfully", user: result.rows[0] });
+          .json({ message: "User updated successfully", user: result.rows[0] });
       } else {
-        res.status(500).json({ message: "Error creating user" });
+        res.status(500).json({ message: "Error updating user" });
       }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Database error" });
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
     }
   } catch (error) {
     console.error(error);
@@ -144,37 +210,209 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
   }
 });
 
-app.post('/write', async (req, res) => {
-	try {
-		// check if the user is logged in
-		if (req.session.user) {
-			// connecting to the database
-			const database = await connectDatabase();
+app.post("/updateUserAvatar", upload.single("avatar"), async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
 
-      // connect to the database
-      database = await connectDatabase();
-      // insert the post into the database
-      const result = await database
-        .query(
-          `INSERT INTO posts (user_id, title, content) VALUES ('${user_id}', '${title}', '${content}') RETURNING *;`
-        )
-        .then((result) => {
-          // check if the user was created
-          if (result.rows.length > 0) {
-            res
-              .status(200)
-              .json({
-                message: "Post created successfully",
-                post: result.rows[0],
-              });
-          } else {
-            res.status(500).json({ message: "Error creating post" });
-          }
+    if (userCookie) {
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
+      if (!user_id) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const avatarPath = path.basename(req.file.path);
+      console.log(avatarPath);
+
+      const database = await connectDatabase();
+
+      const result = await database.query(
+        `UPDATE users SET avatar = '${avatarPath}' WHERE user_id = '${user_id}' RETURNING *;`
+      );
+
+      if (result.rows.length > 0) {
+        res.cookie("user", JSON.stringify(result.rows[0]), {
+          maxAge: 3600000 * 24,
+          httpOnly: false,
+          secure: false,
         });
-    } else
+        res
+          .status(200)
+          .json({ message: "User updated successfully", user: result.rows[0] });
+      } else {
+        res.status(500).json({ message: "Error updating user" });
+      }
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.delete("/user", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+    
+    if (userCookie) {
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
+      if (!user_id) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const database = await connectDatabase();
+
+      const result = await database.query(
+        `DELETE FROM users WHERE user_id = '${user_id}' RETURNING *;`
+      );
+
+      if (result.rows.length > 0) {
+        res.clearCookie("user");
+        res.status(200).json({ message: "User deleted successfully", user: result.rows[0] });        
+      }
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("user");
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+// ----------------- POSTS ----------------- //
+
+app.get("/getPosts", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+      const database = await connectDatabase();
+
+      const query = `
+          WITH 
+          CommentData AS (
+              SELECT 
+                  comments.post_id,
+                  COALESCE(
+                      JSON_AGG(
+                          JSON_BUILD_OBJECT(
+                              'comment_id', comments.comment_id,
+                              'user_id', comments.user_id,
+                              'first_name', users.first_name,
+                              'last_name', users.last_name,
+                              'content', comments.content,
+                              'created_at', comments.created_at
+                          )
+                      ) FILTER (WHERE comments.comment_id IS NOT NULL), 
+                      '[]'
+                  ) AS comments
+              FROM 
+                  comments
+              LEFT JOIN 
+                  users ON comments.user_id = users.user_id
+              GROUP BY 
+                  comments.post_id
+          ),
+          LikeData AS (
+              SELECT 
+                  post_id,
+                  COUNT(user_id) AS like_count
+              FROM 
+                  likes
+              GROUP BY 
+                  post_id
+          )
+      SELECT 
+          posts.post_id,
+          posts.user_id,
+          users.first_name,
+          users.last_name,
+          users.avatar,
+          posts.title,
+          posts.content,
+          posts.created_at,
+          COALESCE(CommentData.comments, '[]') AS comments,
+          COALESCE(LikeData.like_count, 0) AS like_count
+      FROM 
+          posts
+      INNER JOIN 
+          users ON posts.user_id = users.user_id
+      LEFT JOIN 
+          CommentData ON posts.post_id = CommentData.post_id
+      LEFT JOIN 
+          LikeData ON posts.post_id = LikeData.post_id
+      ORDER BY 
+          posts.created_at DESC;
+      `;
+
+      const result = await database.query(query);
+
+      if (result.rows.length > 0) {
+        res.status(200).json({
+          message: "Posts retrieved successfully",
+          posts: result.rows,
+        });
+      } else {
+        res.status(404).json({ message: "No posts found" });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/write", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+      const { title, content } = req.body;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
+      if (!user_id || !title || !content) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const database = await connectDatabase();
+
+      const query = `
+        INSERT INTO posts (user_id, title, content) 
+        VALUES ($1, $2, $3) 
+        RETURNING *;
+      `;
+
+      const values = [user_id, title, content];
+
+      const result = await database.query(query, values);
+
+      if (result.rows.length > 0) {
+        res.status(200).json({
+          message: "Post created successfully",
+          post: result.rows[0],
+        });
+      } else {
+        res.status(500).json({ message: "Error creating post" });
+      }
+    } else {
       res
         .status(401)
         .json({ message: "You must be logged in to create a post" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -184,103 +422,36 @@ app.post('/write', async (req, res) => {
 app.post("/addComment", async (req, res) => {
   try {
     const userCookie = req.cookies.user;
-    // check if the user is logged in
-    if (userCookie) {
-      // Extract user details from the post request
-      const { post_id, content } = req.body;
-      const user_id = userCookie[0].id;
 
-      // Verify the user and password are correct from the post request
+    if (userCookie) {
+      const { post_id, content } = req.body;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
       if (!post_id || !content) {
         res.status(400).json({ message: "Invalid Request" });
-        // stop the execution if the username or password is missing
         return;
       }
 
-      // connect to the database
-      database = await connectDatabase();
-      // insert the comment into the database
-      const result = await database
-        .query(
-          `INSERT INTO comments (user_id, post_id, content) VALUES ('${user_id}', '${post_id}', '${content}') RETURNING *;`
-        )
-        .then((result) => {
-          // check if the user was created
-          if (result.rows.length > 0) {
-            res.status(200).json({
-              message: "Comment created successfully",
-              comment: result.rows[0],
-            });
-          } else {
-            res.status(500).json({ message: "Error creating comment" });
-          }
+      const database = await connectDatabase();
+      const result = await database.query(
+        `INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3) RETURNING *;`,
+        [user_id, post_id, content]
+      );
+
+      if (result.rows.length > 0) {
+        res.status(200).json({
+          message: "Comment created successfully",
+          comment: result.rows[0],
         });
-    } else
+      } else {
+        res.status(500).json({ message: "Error creating comment" });
+      }
+    } else {
       res
         .status(401)
         .json({ message: "You must be logged in to create a comment" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-app.get("/getPosts", async (req, res) => {
-  try {
-    // connect to the database
-    database = await connectDatabase();
-
-    const query = `
-			SELECT posts.id as id, 
-			       users.firstname as firstName,
-				     users.lastname as lastName,
-             users.id as user_id,
-             users.avatar_path as avatar_path,
-			       posts.content,
-				     posts.title,
-			       posts.DATE as timestamp 
-			FROM posts 
-			INNER JOIN users on posts.user_id = users.id 
-			ORDER BY DATE DESC;
-		`;
-
-    const result = await database.query(query).then((result) => {
-      if (result.rows.length > 0) {
-        res.status(200).json({
-          message: "Posts retrieved successfully",
-          posts: result.rows,
-        });
-      } else {
-        res.status(404).json({ message: "No posts found" });
-      }
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-app.get("/getComments", async (req, res) => {
-  try {
-    // get the parameters from the request
-    const { post_id } = req.query;
-
-    // connect to the database
-    database = await connectDatabase();
-    // get the comments of the post from the database
-    const result = await database
-      .query(`SELECT * FROM comments WHERE post_id='${post_id}';`)
-      .then((result) => {
-        // check if the user was created
-        if (result.rows.length > 0) {
-          res.status(200).json({
-            message: "Comments retrieved successfully",
-            comments: result.rows,
-          });
-        } else {
-          res.status(500).json({ message: "Error retrieving comments" });
-        }
-      });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -290,74 +461,45 @@ app.get("/getComments", async (req, res) => {
 app.post("/likePost", async (req, res) => {
   try {
     const userCookie = req.cookies.user;
-    // Check if the user is logged in
+
     if (userCookie) {
-      // Extract user details from the post request
-      const { user_id, post_id } = req.body;
-
-      // Verify the user and post IDs are provided
-      if (!user_id || !post_id) {
-        return res.status(400).json({ message: "Invalid Request" });
-      }
-      // connect to the database
-      database = await connectDatabase();
-      // Insert the like into the database without using parameterized query
-      const result = await database.query(
-        `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
-      );
-
-      // Check if the like was created
-      if (result.rows.length > 0) {
-        return res
-          .status(200)
-          .json({ message: "Like created successfully", like: result.rows[0] });
-      } else {
-        return res.status(500).json({ message: "Error creating like" });
-      }
-    } else {
-      return res
-        .status(401)
-        .json({ message: "You must be logged in to create a like" });
-    }
-  } catch (error) {
-    console.error(error);
-
-    // Check if error is due to a unique constraint violation
-    if (error.code === "23505") {
-      return res.status(400).json({ message: "User already liked this post" });
-    }
-
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-app.post("/likePost", async (req, res) => {
-  try {
-    const userCookie = req.cookies.user;
-    // Check if the user is logged in
-    if (userCookie) {
-      // Extract user details from the post request
       const { post_id } = req.body;
-      const user_id = userCookie[0].id;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
 
-      // Verify the user and post IDs are provided
       if (!post_id) {
         return res.status(400).json({ message: "Invalid Request" });
       }
-      // connect to the database
-      database = await connectDatabase();
-      // Insert the like into the database without using parameterized query
-      const result = await database.query(
-        `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
-      );
 
-      // Check if the like was created
-      if (result.rows.length > 0) {
-        return res
-          .status(200)
-          .json({ message: "Like created successfully", like: result.rows[0] });
+      const database = await connectDatabase();
+      const checkQuery =
+        "SELECT * FROM likes WHERE user_id = $1 AND post_id = $2;";
+      const checkResult = await database.query(checkQuery, [user_id, post_id]);
+
+      if (checkResult.rows.length > 0) {
+        const deleteQuery =
+          "DELETE FROM likes WHERE user_id = $1 AND post_id = $2 RETURNING *;";
+        const deleteResult = await database.query(deleteQuery, [
+          user_id,
+          post_id,
+        ]);
+
+        return res.status(200).json({
+          message: "Like removed successfully",
+          like: deleteResult.rows[0],
+        });
       } else {
-        return res.status(500).json({ message: "Error creating like" });
+        const insertQuery =
+          "INSERT INTO likes (user_id, post_id) VALUES ($1, $2) RETURNING *;";
+        const insertResult = await database.query(insertQuery, [
+          user_id,
+          post_id,
+        ]);
+
+        return res.status(200).json({
+          message: "Like created successfully",
+          like: insertResult.rows[0],
+        });
       }
     } else {
       return res
@@ -366,52 +508,7 @@ app.post("/likePost", async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-
-    // Check if error is due to a unique constraint violation
-    if (error.code === "23505") {
-      return res.status(400).json({ message: "User already liked this post" });
-    }
-
     return res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-app.get("/logout", (req, res) => {
-  // Clear the user cookie; the name 'user' should match the name used when the cookie was set in the login route.
-  res.clearCookie("user");
-  // Sending a successful response. In a real-world scenario, additional cleanup or checks might be necessary.
-  res.status(200).json({ message: "Logged out successfully" });
-});
-
-app.get("/avatar/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      res.sendFile(path.join(__dirname, `./uploads/${id}`));
-  
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
-});
-
-app.get("/currentuser", (req, res) => {
-  // Attempt to retrieve the user data from the cookie instead of the session.
-  // This is insecure because user data is exposed, and cookies can be manipulated on the client-side.
-  const userCookie = req.cookies.user;
-
-  if (userCookie) {
-    let user;
-    try {
-      user = JSON.parse(userCookie);
-      res.status(200).json({ user: user });
-    } catch (err) {
-      console.error("Error parsing user data", err);
-      res.status(400).json({ message: "Bad Request - Invalid Cookie Data" });
-    }
-  } else {
-    // No cookie means that the user is not authenticated.
-    res.status(401).json({ message: "Unauthorized" });
   }
 });
 
