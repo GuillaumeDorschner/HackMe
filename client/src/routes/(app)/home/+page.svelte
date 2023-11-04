@@ -108,11 +108,10 @@
       <h1 class="text-3xl font-bold">News Feed</h1>
       <a class="px-4 py-2 rounded bg-primary text-white" href="/write">Write a Blog</a>
     </div>
-    
+
     {#if loading}
-      <div class="text-center py-4">
-          Loading...
-      </div>
+      <h2>Loading...</h2>
+
     {:else}
       <ul>
         {#each $posts as post (post.post_id)}

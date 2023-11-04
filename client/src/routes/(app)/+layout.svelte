@@ -42,7 +42,7 @@
 
   <div class="flex items-center">
     {#if loading}
-      <div class="text-center py-4">Loading...</div>
+      <div class="text-center py-4 ml-6">Loading...</div>
     {:else}
       <span class="mx-2">{$user.first_name} {$user.last_name}</span>
       <img
