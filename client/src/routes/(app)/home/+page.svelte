@@ -29,7 +29,8 @@
           comments: [],
           likes: 0,
         }))
-      );
+        );
+        console.log(data.posts);
     } catch (error) {
       console.error(
         "There has been a problem with your fetch operation:",
@@ -41,20 +42,48 @@
   let openedCommentsPostId = 0;
   let newComment = "";
 
-  function addComment(postId) {
-    const postsData = get(posts);
-    const postIndex = postsData.findIndex((post) => post.id === postId);
-    if (postIndex !== -1) {
-      const updatedPost = { ...postsData[postIndex] };
-      updatedPost.comments.push({
-        commenter: `${get(user).firstname} ${get(user).lastname}`,
-        comment: newComment,
+  async function addComment(postId) {
+    try{
+
+      console.log(postId, newComment);
+
+      const response = await fetch(`${backendUrl}addComment`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+      "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ "post_id": postId, "content": newComment }),
       });
-      postsData[postIndex] = updatedPost;
-      posts.set(postsData);
-      newComment = "";
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      const data = await response.json();
+      console.log(data);
+    }
+    catch (error) {
+      console.error(
+      "There has been a problem with your comment",
+      error
+      );
     }
   }
+
+  // function addComment(postId) {
+  //   const postsData = get(posts);
+  //   const postIndex = postsData.findIndex((post) => post.id === postId);
+  //   if (postIndex !== -1) {
+  //     const updatedPost = { ...postsData[postIndex] };
+  //     updatedPost.comments.push({
+  //       commenter: `${get(user).firstname} ${get(user).lastname}`,
+  //       comment: newComment,
+  //     });
+  //     postsData[postIndex] = updatedPost;
+  //     posts.set(postsData);
+  //     newComment = "";
+  //   }
+  // }
 
   function addLike(postId) {
     fetch(`${backendUrl}likePost`, {

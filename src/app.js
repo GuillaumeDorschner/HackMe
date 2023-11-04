@@ -19,10 +19,10 @@ if (process.env.NODE_ENV === "production") {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "src/uploads/"); // Destination folder
+    cb(null, "src/uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname); // Naming file
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
@@ -42,31 +42,31 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+
+
+// ----------------- USERS ----------------- //
+
+
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
       res.status(400).json({ message: "Invalid Request" });
-      // stop the execution if the username or password is missing
       return;
     }
 
-    // connect to the database
     database = await connectDatabase();
-    // Verify the user and password are correct from the post request
-    // verify the user exists in the request
+
     database
       .query(
         `SELECT id,email,firstname,lastname,avatar_path FROM users WHERE email='${email}' AND password='${password}';`
       )
       .then((result) => {
-        // If the user is found, return the user information
         if (result.rows.length > 0) {
-          // save the user in the session
           res.cookie("user", JSON.stringify(result.rows), {
             maxAge: 3600000 * 24,
-            httpOnly: false, // The cookie is accessible via JavaScript
-            secure: false, // The cookie will be transmitted over HTTP
+            httpOnly: false,
+            secure: false,
           });
           res.status(200).json(result.rows);
         } else {
@@ -81,28 +81,21 @@ app.post("/login", async (req, res) => {
 
 app.post("/signup", upload.single("avatar"), async (req, res) => {
   try {
-    // Extract user details from the post request
     const { password, email, firstname, lastname } = req.body;
 
-    // Verify the user and password are correct from the post request
     if (!password || !email || !firstname || !lastname) {
       res.status(400).json({ message: "Invalid Request" });
-      // stop the execution if the username or password is missing
       return;
     }
 
-    // verify if the email has a good syntax
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       res.status(400).json({ message: "Invalid email syntax" });
-      // stop the execution if the email is invalid
       return;
     }
 
-    // connect to the database
     const database = await connectDatabase();
 
-    // Verify the user isn't already signup
     const emailCheckResult = await database.query(
       `SELECT email FROM users WHERE email = '${email}';`
     );
@@ -111,17 +104,14 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ message: "Email already used" });
     }
 
-    // Get the file path after uploading
     const avatarPath = path.basename(req.file.path);
     console.log(avatarPath);
 
     try {
-      // insert the user into the database
       const result = await database.query(
         `INSERT INTO users (password, email, firstname, lastname, avatar_path) VALUES ('${password}', '${email}', '${firstname}', '${lastname}','${avatarPath}') RETURNING *;`
       );
 
-      // check if the user was created
       if (result.rows.length > 0) {
         res.cookie("user", JSON.stringify(result.rows[0]), {
           maxAge: 3600000 * 24,
@@ -144,22 +134,45 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
   }
 });
 
+
+app.get("/currentuser", (req, res) => {
+
+  const userCookie = req.cookies.user;
+
+  if (userCookie) {
+    let user;
+    try {
+      user = JSON.parse(userCookie);
+      res.status(200).json({ user: user });
+    } catch (err) {
+      console.error("Error parsing user data", err);
+      res.status(400).json({ message: "Bad Request - Invalid Cookie Data" });
+    }
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+});
+
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("user");
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+
+// ----------------- POSTS ----------------- //
+
 app.post('/write', async (req, res) => {
 	try {
-		// check if the user is logged in
 		if (req.session.user) {
-			// connecting to the database
 			const database = await connectDatabase();
 
-      // connect to the database
       database = await connectDatabase();
-      // insert the post into the database
       const result = await database
         .query(
           `INSERT INTO posts (user_id, title, content) VALUES ('${user_id}', '${title}', '${content}') RETURNING *;`
         )
         .then((result) => {
-          // check if the user was created
           if (result.rows.length > 0) {
             res
               .status(200)
@@ -184,50 +197,53 @@ app.post('/write', async (req, res) => {
 app.post("/addComment", async (req, res) => {
   try {
     const userCookie = req.cookies.user;
-    // check if the user is logged in
+    console.log(userCookie);
+    console.log("test");
+    
     if (userCookie) {
-      // Extract user details from the post request
       const { post_id, content } = req.body;
       const user_id = userCookie[0].id;
+      console.log(typeof userCookie);  // should log 'object' if it's an array
+      console.log(Array.isArray(userCookie));  // should log true if it's an array
+      console.log(typeof userCookie[0]);  // should log 'object' if it's an object
+      
 
-      // Verify the user and password are correct from the post request
       if (!post_id || !content) {
         res.status(400).json({ message: "Invalid Request" });
-        // stop the execution if the username or password is missing
         return;
       }
-
-      // connect to the database
-      database = await connectDatabase();
-      // insert the comment into the database
-      const result = await database
-        .query(
-          `INSERT INTO comments (user_id, post_id, content) VALUES ('${user_id}', '${post_id}', '${content}') RETURNING *;`
-        )
-        .then((result) => {
-          // check if the user was created
-          if (result.rows.length > 0) {
-            res.status(200).json({
-              message: "Comment created successfully",
-              comment: result.rows[0],
-            });
-          } else {
-            res.status(500).json({ message: "Error creating comment" });
-          }
+      console.log("test");
+      
+      const database = await connectDatabase();
+      const result = await database.query(
+        `INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3) RETURNING *;`,
+        [user_id, post_id, content]
+      );
+      
+      console.log("test");
+      if (result.rows.length > 0) {
+        res.status(200).json({
+          message: "Comment created successfully",
+          comment: result.rows[0],
         });
-    } else
+      } else {
+        res.status(500).json({ message: "Error creating comment" });
+      }
+      
+    } else {
       res
         .status(401)
         .json({ message: "You must be logged in to create a comment" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
+
 app.get("/getPosts", async (req, res) => {
   try {
-    // connect to the database
     database = await connectDatabase();
 
     const query = `
@@ -260,53 +276,20 @@ app.get("/getPosts", async (req, res) => {
   }
 });
 
-app.get("/getComments", async (req, res) => {
-  try {
-    // get the parameters from the request
-    const { post_id } = req.query;
-
-    // connect to the database
-    database = await connectDatabase();
-    // get the comments of the post from the database
-    const result = await database
-      .query(`SELECT * FROM comments WHERE post_id='${post_id}';`)
-      .then((result) => {
-        // check if the user was created
-        if (result.rows.length > 0) {
-          res.status(200).json({
-            message: "Comments retrieved successfully",
-            comments: result.rows,
-          });
-        } else {
-          res.status(500).json({ message: "Error retrieving comments" });
-        }
-      });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
 app.post("/likePost", async (req, res) => {
   try {
     const userCookie = req.cookies.user;
-    // Check if the user is logged in
     if (userCookie) {
-      // Extract user details from the post request
       const { user_id, post_id } = req.body;
 
-      // Verify the user and post IDs are provided
       if (!user_id || !post_id) {
         return res.status(400).json({ message: "Invalid Request" });
       }
-      // connect to the database
       database = await connectDatabase();
-      // Insert the like into the database without using parameterized query
       const result = await database.query(
         `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
       );
 
-      // Check if the like was created
       if (result.rows.length > 0) {
         return res
           .status(200)
@@ -322,7 +305,6 @@ app.post("/likePost", async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    // Check if error is due to a unique constraint violation
     if (error.code === "23505") {
       return res.status(400).json({ message: "User already liked this post" });
     }
@@ -334,24 +316,18 @@ app.post("/likePost", async (req, res) => {
 app.post("/likePost", async (req, res) => {
   try {
     const userCookie = req.cookies.user;
-    // Check if the user is logged in
     if (userCookie) {
-      // Extract user details from the post request
       const { post_id } = req.body;
       const user_id = userCookie[0].id;
 
-      // Verify the user and post IDs are provided
       if (!post_id) {
         return res.status(400).json({ message: "Invalid Request" });
       }
-      // connect to the database
       database = await connectDatabase();
-      // Insert the like into the database without using parameterized query
       const result = await database.query(
         `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
       );
 
-      // Check if the like was created
       if (result.rows.length > 0) {
         return res
           .status(200)
@@ -367,20 +343,12 @@ app.post("/likePost", async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    // Check if error is due to a unique constraint violation
     if (error.code === "23505") {
       return res.status(400).json({ message: "User already liked this post" });
     }
 
     return res.status(500).json({ message: "Internal Server Error" });
   }
-});
-
-app.get("/logout", (req, res) => {
-  // Clear the user cookie; the name 'user' should match the name used when the cookie was set in the login route.
-  res.clearCookie("user");
-  // Sending a successful response. In a real-world scenario, additional cleanup or checks might be necessary.
-  res.status(200).json({ message: "Logged out successfully" });
 });
 
 app.get("/avatar/:id", async (req, res) => {
@@ -393,26 +361,6 @@ app.get("/avatar/:id", async (req, res) => {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
-});
-
-app.get("/currentuser", (req, res) => {
-  // Attempt to retrieve the user data from the cookie instead of the session.
-  // This is insecure because user data is exposed, and cookies can be manipulated on the client-side.
-  const userCookie = req.cookies.user;
-
-  if (userCookie) {
-    let user;
-    try {
-      user = JSON.parse(userCookie);
-      res.status(200).json({ user: user });
-    } catch (err) {
-      console.error("Error parsing user data", err);
-      res.status(400).json({ message: "Bad Request - Invalid Cookie Data" });
-    }
-  } else {
-    // No cookie means that the user is not authenticated.
-    res.status(401).json({ message: "Unauthorized" });
-  }
 });
 
 app.use("/api/v1", api);
