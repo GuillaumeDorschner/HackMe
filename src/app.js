@@ -166,39 +166,61 @@ app.get("/getPosts", async (req, res) => {
       const database = await connectDatabase();
 
       const query = `
-      WITH CommentData AS (
-        SELECT post_id,
-               JSON_AGG(JSON_BUILD_OBJECT(
-                 'comment_id', comment_id,
-                 'user_id', user_id,
-                 'content', content,
-                 'created_at', created_at
-               )) AS comments
-        FROM comments
-        GROUP BY post_id
-      ),
-      LikeData AS (
-        SELECT post_id,
-               COUNT(user_id) AS like_count
-        FROM likes
-        GROUP BY post_id
-      )
-      SELECT posts.post_id,
-             posts.user_id,
-             users.first_name,
-             users.last_name,
-             users.avatar,
-             posts.title,
-             posts.content,
-             posts.created_at,
-             CommentData.comments,
-             COALESCE(LikeData.like_count, 0) AS like_count
-      FROM posts
-      INNER JOIN users ON posts.user_id = users.user_id
-      LEFT JOIN CommentData ON posts.post_id = CommentData.post_id
-      LEFT JOIN LikeData ON posts.post_id = LikeData.post_id
-      ORDER BY posts.created_at DESC;
-    `;
+          WITH 
+          CommentData AS (
+              SELECT 
+                  comments.post_id,
+                  COALESCE(
+                      JSON_AGG(
+                          JSON_BUILD_OBJECT(
+                              'comment_id', comments.comment_id,
+                              'user_id', comments.user_id,
+                              'first_name', users.first_name,
+                              'last_name', users.last_name,
+                              'content', comments.content,
+                              'created_at', comments.created_at
+                          )
+                      ) FILTER (WHERE comments.comment_id IS NOT NULL), 
+                      '[]'
+                  ) AS comments
+              FROM 
+                  comments
+              LEFT JOIN 
+                  users ON comments.user_id = users.user_id
+              GROUP BY 
+                  comments.post_id
+          ),
+          LikeData AS (
+              SELECT 
+                  post_id,
+                  COUNT(user_id) AS like_count
+              FROM 
+                  likes
+              GROUP BY 
+                  post_id
+          )
+      SELECT 
+          posts.post_id,
+          posts.user_id,
+          users.first_name,
+          users.last_name,
+          users.avatar,
+          posts.title,
+          posts.content,
+          posts.created_at,
+          COALESCE(CommentData.comments, '[]') AS comments,
+          COALESCE(LikeData.like_count, 0) AS like_count
+      FROM 
+          posts
+      INNER JOIN 
+          users ON posts.user_id = users.user_id
+      LEFT JOIN 
+          CommentData ON posts.post_id = CommentData.post_id
+      LEFT JOIN 
+          LikeData ON posts.post_id = LikeData.post_id
+      ORDER BY 
+          posts.created_at DESC;
+      `;
 
       const result = await database.query(query);
 
