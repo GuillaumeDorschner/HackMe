@@ -4,11 +4,12 @@ const path = require("path");
 var cookieParser = require("cookie-parser");
 const multer = require("multer");
 const { connectDatabase } = require("./database/connectionconfigDb");
+const api = require("./api");
+const { notFound, errorHandler } = require("./middlewares/errors.middleware");
 
 const app = express();
 
-const api = require("./api");
-const { notFound, errorHandler } = require("./middlewares/errors.middleware");
+// ----------------- MIDDLEWARES ----------------- //
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/public"));
@@ -150,6 +151,140 @@ app.get("/currentuser", async (req, res) => {
     res.status(401).json({ message: "Unauthorized" });
   }
 });
+
+app.post("/updateUser", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+      const { password, email, first_name, last_name } = req.body;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
+      if (!user_id || !password || !email || !first_name || !last_name) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ message: "Invalid email syntax" });
+        return;
+      }
+
+      const database = await connectDatabase();
+
+      const emailCheckResult = await database.query(
+        `SELECT email FROM users WHERE email = '${email}';`
+      );
+
+      if (emailCheckResult.rows.length > 0) {
+        return res.status(400).json({ message: "Email already used" });
+      }
+
+      const avatarPath = path.basename(req.file.path);
+      console.log(avatarPath);
+
+      const result = await database.query(
+        `UPDATE users SET password = '${password}', email = '${email}', first_name = '${first_name}', last_name = '${last_name}', avatar = '${avatarPath}' WHERE user_id = '${user_id}' RETURNING *;`
+      );
+
+      if (result.rows.length > 0) {
+        res.cookie("user", JSON.stringify(result.rows[0]), {
+          maxAge: 3600000 * 24,
+          httpOnly: false,
+          secure: false,
+        });
+        res
+          .status(200)
+          .json({ message: "User updated successfully", user: result.rows[0] });
+      } else {
+        res.status(500).json({ message: "Error updating user" });
+      }
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/updateUserAvatar", upload.single("avatar"), async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
+      if (!user_id) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const avatarPath = path.basename(req.file.path);
+      console.log(avatarPath);
+
+      const database = await connectDatabase();
+
+      const result = await database.query(
+        `UPDATE users SET avatar = '${avatarPath}' WHERE user_id = '${user_id}' RETURNING *;`
+      );
+
+      if (result.rows.length > 0) {
+        res.cookie("user", JSON.stringify(result.rows[0]), {
+          maxAge: 3600000 * 24,
+          httpOnly: false,
+          secure: false,
+        });
+        res
+          .status(200)
+          .json({ message: "User updated successfully", user: result.rows[0] });
+      } else {
+        res.status(500).json({ message: "Error updating user" });
+      }
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.delete("/user", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+    
+    if (userCookie) {
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
+
+      if (!user_id) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const database = await connectDatabase();
+
+      const result = await database.query(
+        `DELETE FROM users WHERE user_id = '${user_id}' RETURNING *;`
+      );
+
+      if (result.rows.length > 0) {
+        res.clearCookie("user");
+        res.status(200).json({ message: "User deleted successfully", user: result.rows[0] });        
+      }
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 app.get("/logout", (req, res) => {
   res.clearCookie("user");
