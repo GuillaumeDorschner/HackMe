@@ -245,7 +245,8 @@ app.post("/write", async (req, res) => {
 
     if (userCookie) {
       const { title, content } = req.body;
-      const user_id = JSON.parse(userCookie)[0].id;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
 
       if (!user_id || !title || !content) {
         res.status(400).json({ message: "Invalid Request" });
@@ -289,7 +290,8 @@ app.post("/addComment", async (req, res) => {
 
     if (userCookie) {
       const { post_id, content } = req.body;
-      const user_id = JSON.parse(userCookie)[0].id;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
 
       if (!post_id || !content) {
         res.status(400).json({ message: "Invalid Request" });
@@ -327,7 +329,8 @@ app.post("/likePost", async (req, res) => {
 
     if (userCookie) {
       const { post_id } = req.body;
-      const user_id = JSON.parse(userCookie)[0].id;
+      const user = JSON.parse(userCookie)[0];
+      const user_id = user.user_id;
 
       if (!post_id) {
         return res.status(400).json({ message: "Invalid Request" });

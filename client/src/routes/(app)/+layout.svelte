@@ -40,9 +40,32 @@
     <a href="/home" class="hidden text-2xl font-bold md:inline-block">HackMe</a>
   </div>
 
+  
+    <div class="flex">
+      <a
+        class="m-1 px-4 py-2 rounded bg-primary text-white flex items-center"
+        href="/write"
+      >
+        <i class="fa-solid fa-pen-nib" />
+      </a>
+
+      <a
+        class="m-1 px-4 py-2 rounded bg-primary text-white flex items-center"
+        href="/settings"
+      >
+        <i class="fa-solid fa-gear" />
+      </a>
+      <a
+        class="m-1 px-4 py-2 rounded bg-primary text-white flex items-center"
+        href="/home"
+      >
+        <i class="fa-solid fa-house" />
+      </a>
+  </div>
+
   <div class="flex items-center">
     {#if loading}
-      <div class="text-center py-4 ml-6">Loading...</div>
+      <div class="py-4 ml-12">Loading...</div>
     {:else}
       <span class="mx-2">{$user.first_name} {$user.last_name}</span>
       <img
@@ -52,25 +75,6 @@
         class="mx-2 w-10 h-10 rounded-full"
       />
     {/if}
-    <div class="flex">
-      {#if $page.url.pathname != "/home"}
-        <a
-          class="m-1 px-4 py-2 rounded bg-primary text-white flex items-center"
-          href="/home"
-        >
-          <i class="fa-solid fa-house" />
-        </a>
-      {/if}
-
-      {#if $page.url.pathname != "/settings"}
-        <a
-          class="m-1 px-4 py-2 rounded bg-primary text-white flex items-center"
-          href="/settings"
-        >
-          <i class="fa-solid fa-gear" />
-        </a>
-      {/if}
-    </div>
   </div>
 </header>
 
@@ -84,9 +88,6 @@
     right: 0;
     background-color: white;
     z-index: 1000;
-  }
-  main {
-    margin-top: 60px;
   }
   .blur-effect {
     -webkit-backdrop-filter: blur(15px);
