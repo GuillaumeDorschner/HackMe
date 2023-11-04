@@ -35,17 +35,14 @@ app.use(express.json());
 const corsOptions = {
   credentials: true,
   origin: (origin, callback) => {
-      const allowedOrigin = `${origin}`;
-      callback(null, allowedOrigin);
-  }
+    const allowedOrigin = `${origin}`;
+    callback(null, allowedOrigin);
+  },
 };
 
 app.use(cors(corsOptions));
 
-
-
 // ----------------- USERS ----------------- //
-
 
 app.post("/login", async (req, res) => {
   try {
@@ -55,24 +52,22 @@ app.post("/login", async (req, res) => {
       return;
     }
 
-    database = await connectDatabase();
+    const database = await connectDatabase();
 
-    database
-      .query(
-        `SELECT id,email,firstname,lastname,avatar_path FROM users WHERE email='${email}' AND password='${password}';`
-      )
-      .then((result) => {
-        if (result.rows.length > 0) {
-          res.cookie("user", JSON.stringify(result.rows), {
-            maxAge: 3600000 * 24,
-            httpOnly: false,
-            secure: false,
-          });
-          res.status(200).json(result.rows);
-        } else {
-          res.status(404).json({ message: "User not found" });
-        }
+    const result = await database.query(
+      `SELECT user_id,email,first_name,last_name,avatar FROM users WHERE email='${email}' AND password='${password}';`
+    );
+
+    if (result.rows.length > 0) {
+      res.cookie("user", JSON.stringify(result.rows), {
+        maxAge: 3600000 * 24,
+        httpOnly: false,
+        secure: false,
       });
+      res.status(200).json(result.rows);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -81,9 +76,9 @@ app.post("/login", async (req, res) => {
 
 app.post("/signup", upload.single("avatar"), async (req, res) => {
   try {
-    const { password, email, firstname, lastname } = req.body;
+    const { password, email, first_name, last_name } = req.body;
 
-    if (!password || !email || !firstname || !lastname) {
+    if (!password || !email || !first_name || !last_name) {
       res.status(400).json({ message: "Invalid Request" });
       return;
     }
@@ -107,26 +102,21 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
     const avatarPath = path.basename(req.file.path);
     console.log(avatarPath);
 
-    try {
-      const result = await database.query(
-        `INSERT INTO users (password, email, firstname, lastname, avatar_path) VALUES ('${password}', '${email}', '${firstname}', '${lastname}','${avatarPath}') RETURNING *;`
-      );
+    const result = await database.query(
+      `INSERT INTO users (password, email, first_name, last_name, avatar) VALUES ('${password}', '${email}', '${first_name}', '${last_name}','${avatarPath}') RETURNING *;`
+    );
 
-      if (result.rows.length > 0) {
-        res.cookie("user", JSON.stringify(result.rows[0]), {
-          maxAge: 3600000 * 24,
-          httpOnly: false,
-          secure: false,
-        });
-        res
-          .status(200)
-          .json({ message: "User created successfully", user: result.rows[0] });
-      } else {
-        res.status(500).json({ message: "Error creating user" });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Database error" });
+    if (result.rows.length > 0) {
+      res.cookie("user", JSON.stringify(result.rows[0]), {
+        maxAge: 3600000 * 24,
+        httpOnly: false,
+        secure: false,
+      });
+      res
+        .status(200)
+        .json({ message: "User created successfully", user: result.rows[0] });
+    } else {
+      res.status(500).json({ message: "Error creating user" });
     }
   } catch (error) {
     console.error(error);
@@ -134,15 +124,23 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
   }
 });
 
+app.get("/avatar/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
-app.get("/currentuser", (req, res) => {
+    res.sendFile(path.join(__dirname, `./uploads/${id}`));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
+app.get("/currentuser", async (req, res) => {
   const userCookie = req.cookies.user;
 
   if (userCookie) {
-    let user;
     try {
-      user = JSON.parse(userCookie);
+      const user = JSON.parse(userCookie);
       res.status(200).json({ user: user });
     } catch (err) {
       console.error("Error parsing user data", err);
@@ -153,41 +151,110 @@ app.get("/currentuser", (req, res) => {
   }
 });
 
-
 app.get("/logout", (req, res) => {
   res.clearCookie("user");
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-
 // ----------------- POSTS ----------------- //
 
-app.post('/write', async (req, res) => {
-	try {
-		if (req.session.user) {
-			const database = await connectDatabase();
+app.get("/getPosts", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
 
-      database = await connectDatabase();
-      const result = await database
-        .query(
-          `INSERT INTO posts (user_id, title, content) VALUES ('${user_id}', '${title}', '${content}') RETURNING *;`
-        )
-        .then((result) => {
-          if (result.rows.length > 0) {
-            res
-              .status(200)
-              .json({
-                message: "Post created successfully",
-                post: result.rows[0],
-              });
-          } else {
-            res.status(500).json({ message: "Error creating post" });
-          }
+    if (userCookie) {
+      const database = await connectDatabase();
+
+      const query = `
+      WITH CommentData AS (
+        SELECT post_id,
+               JSON_AGG(JSON_BUILD_OBJECT(
+                 'comment_id', comment_id,
+                 'user_id', user_id,
+                 'content', content,
+                 'created_at', created_at
+               )) AS comments
+        FROM comments
+        GROUP BY post_id
+      ),
+      LikeData AS (
+        SELECT post_id,
+               COUNT(user_id) AS like_count
+        FROM likes
+        GROUP BY post_id
+      )
+      SELECT posts.post_id,
+             posts.user_id,
+             users.first_name,
+             users.last_name,
+             users.avatar,
+             posts.title,
+             posts.content,
+             posts.created_at,
+             CommentData.comments,
+             COALESCE(LikeData.like_count, 0) AS like_count
+      FROM posts
+      INNER JOIN users ON posts.user_id = users.user_id
+      LEFT JOIN CommentData ON posts.post_id = CommentData.post_id
+      LEFT JOIN LikeData ON posts.post_id = LikeData.post_id
+      ORDER BY posts.created_at DESC;
+    `;
+
+      const result = await database.query(query);
+
+      if (result.rows.length > 0) {
+        res.status(200).json({
+          message: "Posts retrieved successfully",
+          posts: result.rows,
         });
-    } else
+      } else {
+        res.status(404).json({ message: "No posts found" });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.post("/write", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+      const { title, content } = req.body;
+      const user_id = JSON.parse(userCookie)[0].id;
+
+      if (!user_id || !title || !content) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const database = await connectDatabase();
+
+      const query = `
+        INSERT INTO posts (user_id, title, content) 
+        VALUES ($1, $2, $3) 
+        RETURNING *;
+      `;
+
+      const values = [user_id, title, content];
+
+      const result = await database.query(query, values);
+
+      if (result.rows.length > 0) {
+        res.status(200).json({
+          message: "Post created successfully",
+          post: result.rows[0],
+        });
+      } else {
+        res.status(500).json({ message: "Error creating post" });
+      }
+    } else {
       res
         .status(401)
         .json({ message: "You must be logged in to create a post" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -197,30 +264,22 @@ app.post('/write', async (req, res) => {
 app.post("/addComment", async (req, res) => {
   try {
     const userCookie = req.cookies.user;
-    console.log(userCookie);
-    console.log("test");
-    
+
     if (userCookie) {
       const { post_id, content } = req.body;
-      const user_id = userCookie[0].id;
-      console.log(typeof userCookie);  // should log 'object' if it's an array
-      console.log(Array.isArray(userCookie));  // should log true if it's an array
-      console.log(typeof userCookie[0]);  // should log 'object' if it's an object
-      
+      const user_id = JSON.parse(userCookie)[0].id;
 
       if (!post_id || !content) {
         res.status(400).json({ message: "Invalid Request" });
         return;
       }
-      console.log("test");
-      
+
       const database = await connectDatabase();
       const result = await database.query(
         `INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3) RETURNING *;`,
         [user_id, post_id, content]
       );
-      
-      console.log("test");
+
       if (result.rows.length > 0) {
         res.status(200).json({
           message: "Comment created successfully",
@@ -229,7 +288,6 @@ app.post("/addComment", async (req, res) => {
       } else {
         res.status(500).json({ message: "Error creating comment" });
       }
-      
     } else {
       res
         .status(401)
@@ -241,99 +299,47 @@ app.post("/addComment", async (req, res) => {
   }
 });
 
-
-app.get("/getPosts", async (req, res) => {
-  try {
-    database = await connectDatabase();
-
-    const query = `
-			SELECT posts.id as id, 
-			       users.firstname as firstName,
-				     users.lastname as lastName,
-             users.id as user_id,
-             users.avatar_path as avatar_path,
-			       posts.content,
-				     posts.title,
-			       posts.DATE as timestamp 
-			FROM posts 
-			INNER JOIN users on posts.user_id = users.id 
-			ORDER BY DATE DESC;
-		`;
-
-    const result = await database.query(query).then((result) => {
-      if (result.rows.length > 0) {
-        res.status(200).json({
-          message: "Posts retrieved successfully",
-          posts: result.rows,
-        });
-      } else {
-        res.status(404).json({ message: "No posts found" });
-      }
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
 app.post("/likePost", async (req, res) => {
   try {
     const userCookie = req.cookies.user;
-    if (userCookie) {
-      const { user_id, post_id } = req.body;
 
-      if (!user_id || !post_id) {
-        return res.status(400).json({ message: "Invalid Request" });
-      }
-      database = await connectDatabase();
-      const result = await database.query(
-        `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
-      );
-
-      if (result.rows.length > 0) {
-        return res
-          .status(200)
-          .json({ message: "Like created successfully", like: result.rows[0] });
-      } else {
-        return res.status(500).json({ message: "Error creating like" });
-      }
-    } else {
-      return res
-        .status(401)
-        .json({ message: "You must be logged in to create a like" });
-    }
-  } catch (error) {
-    console.error(error);
-
-    if (error.code === "23505") {
-      return res.status(400).json({ message: "User already liked this post" });
-    }
-
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-app.post("/likePost", async (req, res) => {
-  try {
-    const userCookie = req.cookies.user;
     if (userCookie) {
       const { post_id } = req.body;
-      const user_id = userCookie[0].id;
+      const user_id = JSON.parse(userCookie)[0].id;
 
       if (!post_id) {
         return res.status(400).json({ message: "Invalid Request" });
       }
-      database = await connectDatabase();
-      const result = await database.query(
-        `INSERT INTO Likes (user_id, post_id) VALUES ('${user_id}', '${post_id}') RETURNING *;`
-      );
 
-      if (result.rows.length > 0) {
-        return res
-          .status(200)
-          .json({ message: "Like created successfully", like: result.rows[0] });
+      const database = await connectDatabase();
+      const checkQuery =
+        "SELECT * FROM likes WHERE user_id = $1 AND post_id = $2;";
+      const checkResult = await database.query(checkQuery, [user_id, post_id]);
+
+      if (checkResult.rows.length > 0) {
+        const deleteQuery =
+          "DELETE FROM likes WHERE user_id = $1 AND post_id = $2 RETURNING *;";
+        const deleteResult = await database.query(deleteQuery, [
+          user_id,
+          post_id,
+        ]);
+
+        return res.status(200).json({
+          message: "Like removed successfully",
+          like: deleteResult.rows[0],
+        });
       } else {
-        return res.status(500).json({ message: "Error creating like" });
+        const insertQuery =
+          "INSERT INTO likes (user_id, post_id) VALUES ($1, $2) RETURNING *;";
+        const insertResult = await database.query(insertQuery, [
+          user_id,
+          post_id,
+        ]);
+
+        return res.status(200).json({
+          message: "Like created successfully",
+          like: insertResult.rows[0],
+        });
       }
     } else {
       return res
@@ -342,25 +348,8 @@ app.post("/likePost", async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-
-    if (error.code === "23505") {
-      return res.status(400).json({ message: "User already liked this post" });
-    }
-
     return res.status(500).json({ message: "Internal Server Error" });
   }
-});
-
-app.get("/avatar/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      res.sendFile(path.join(__dirname, `./uploads/${id}`));
-  
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
 });
 
 app.use("/api/v1", api);

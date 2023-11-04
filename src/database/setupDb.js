@@ -26,46 +26,46 @@ const createDatabase = async () => {
   // Create a client for the new database
   const client = await connectDatabase();
 
-  // drop all tables
-  // await client.query('DROP TABLE users, posts, comments;');
-
   // Create tables
-  const createUsersTable = ` CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+  const createUserTable = `CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL,
-    avatar_path VARCHAR(255) NOT NULL
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    avatar VARCHAR(255) NOT NULL
   );`;
-  const createPostsTable = `CREATE TABLE posts (
-    id SERIAL PRIMARY KEY,
+  const createPostTable = `CREATE TABLE posts (
+    post_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
   );`;
-  const createCommentsTable = `CREATE TABLE comments (
-    id SERIAL PRIMARY KEY,
+  const createCommentTable = `CREATE TABLE comments (
+    comment_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     post_id INTEGER NOT NULL,
     content TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (post_id) REFERENCES posts(id),
-    DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id)
   );`;
-  const createLikes = `CREATE TABLE Likes (
-      id SERIAL PRIMARY KEY,
-      post_id INTEGER REFERENCES posts(id),
-      user_id INTEGER REFERENCES users(id),
-      UNIQUE(user_id, post_id)
+  const createLikeTable = `
+  CREATE TABLE likes (
+    like_id SERIAL PRIMARY KEY,
+    post_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    UNIQUE (user_id, post_id)
   );`;
 
-  await client.query(createUsersTable);
-  await client.query(createPostsTable);
-  await client.query(createCommentsTable); 
-  await client.query(createLikes);
+  await client.query(createUserTable);
+  await client.query(createPostTable);
+  await client.query(createCommentTable); 
+  await client.query(createLikeTable);
   
   await client.end().then(() => console.log('Database created successfully'));
 };
