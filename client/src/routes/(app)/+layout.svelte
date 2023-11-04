@@ -25,7 +25,6 @@
       }
       let data = await response.json();
       user.set(data.user[0]);
-      console.log(data.user[0]);
       loading = false;
     } catch (error) {
       console.error(

@@ -152,6 +152,20 @@
         />
       </div>
 
+      {#if showAlert}
+      <div
+        role="alert"
+        class="rounded border-s-4 border-red-500 bg-red-50 p-4 mb-4"
+      >
+        <strong class="block font-medium text-red-800">
+          Something went wrong
+        </strong>
+        <p class="mt-2 text-sm text-red-700">
+          {validationError}
+        </p>
+      </div>
+    {/if}
+
       <div class="flex justify-between">
         <button type="submit" class="px-4 py-2 rounded bg-primary text-white"
           >Save Changes</button
@@ -171,20 +185,6 @@
           type="button"
           class="px-4 py-2 rounded bg-red-500 text-white"
           on:click={deleteUser}>Delete Account</button>
-
-      {#if showAlert}
-        <div
-          role="alert"
-          class="rounded border-s-4 border-red-500 bg-red-50 p-4"
-        >
-          <strong class="block font-medium text-red-800">
-            Something went wrong
-          </strong>
-          <p class="mt-2 text-sm text-red-700">
-            {validationError}
-          </p>
-        </div>
-      {/if}
     </form>
   </section>
 </main>
