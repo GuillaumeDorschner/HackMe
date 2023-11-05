@@ -2,8 +2,8 @@ name: Release Workflow
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 permissions:
   contents: write
@@ -19,8 +19,8 @@ jobs:
       - name: Zip the files
         run: zip -r hackme.zip ./release/init.sql ./release/docker-compose.yml
 
-      - name: Get the version
-        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/})" >> $GITHUB_ENV
+      - name: Set the tag name
+        run: echo "TAG_NAME=$(echo ${GITHUB_REF#refs/tags/})" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -28,8 +28,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ github.sha }}
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
           draft: false
           prerelease: false
 
