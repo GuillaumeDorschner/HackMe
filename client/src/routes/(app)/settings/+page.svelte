@@ -25,7 +25,7 @@
         throw new Error("Network response was not ok " + response.statusText);
       }
       const responseData = await response.json();
-      user.set({}); // Réinitialiser le store user
+      user.set({});
       goto("/login");
     } catch (error) {
       console.error(
