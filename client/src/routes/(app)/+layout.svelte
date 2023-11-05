@@ -1,6 +1,5 @@
 <script>
   import "../../app.css";
-  import { page } from "$app/stores";
   import { user } from "../../store/store.js";
   import "@fortawesome/fontawesome-free/css/all.min.css";
   import { onMount } from "svelte";
