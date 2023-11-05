@@ -8,6 +8,7 @@
   let validationError = "";
   let userForm;
   let file;
+  let toremove;
 
   $: userForm = $user;
 
