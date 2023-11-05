@@ -5,21 +5,22 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Zip the files
         run: zip -r hackme.zip ./release/init.sql ./release/docker-compose.yml
 
       - name: Get the version
-        id: get_version
-        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
-        env:
-          GITHUB_REF: ${{ github.ref }}
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/})" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -27,7 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ env.VERSION }}
           release_name: Release ${{ github.sha }}
           draft: false
           prerelease: false
