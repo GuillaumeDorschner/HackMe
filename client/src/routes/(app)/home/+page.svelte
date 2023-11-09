@@ -1,6 +1,7 @@
 <script>
   import { user, posts } from "../../../store/store.js";
   import { onMount } from "svelte";
+  import Popup from "../../../components/Popup.svelte";
 
   let backendUrl;
   let loading = true;
@@ -8,7 +9,16 @@
   onMount(async () => {
     backendUrl = `http://${window.location.hostname}:3001/`;
     await fetchPosts();
+    console.log($user);
   });
+
+  let popup = { show: false, type: '', title: '', message: '' };
+
+  function showPopup(type, title, message) {
+    popup = { show: true, type, title, message };
+    setTimeout(() => popup.show = false, 5000);
+  }
+
 
   async function fetchPosts() {
     loading = true;
@@ -69,6 +79,7 @@
       newComment = "";
     } catch (error) {
       console.error("There has been a problem with your comment", error);
+      showPopup('error', 'Error', 'Failed to add comment.');
     }
   }
 
@@ -104,12 +115,17 @@
       });
     } catch (error) {
       console.error("There has been a problem with your like", error);
+      showPopup('error', 'Error', 'Failed to update like.');
     }
   }
 </script>
 
 <main class="p-4 mt-16">
   <section class="m-8 w-full max-w-2xl mx-auto">
+    {#if popup.show}
+      <Popup type={popup.type} title={popup.title} message={popup.message} />
+    {/if}
+  
     <div class="flex justify-between mb-6">
       <h1 class="text-3xl font-bold">News Feed</h1>
       <a

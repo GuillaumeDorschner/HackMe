@@ -1,11 +1,10 @@
 <script>
   import { onMount } from "svelte";
   import { user } from "../../../store/store.js";
+  import Popup from "../../../components/Popup.svelte";
   import { goto } from "$app/navigation";
 
   let backendUrl;
-  let showAlert = false;
-  let validationError = "";
   let userForm = {
     first_name: "",
     last_name: "",
@@ -24,6 +23,13 @@
     backendUrl = `http://${window.location.hostname}:3001/`;
   });
 
+  let popup = { show: false, type: '', title: '', message: '' };
+
+  function showPopup(type, title, message) {
+    popup = { show: true, type, title, message };
+    setTimeout(() => popup.show = false, 5000);
+  }
+
   async function logout() {
     try {
       const response = await fetch(`${backendUrl}logout`, {
@@ -33,14 +39,10 @@
       if (!response.ok) {
         throw new Error("Network response was not ok " + response.statusText);
       }
-      const responseData = await response.json();
       user.set({});
       goto("/login");
     } catch (error) {
-      console.error(
-        "There has been a problem with your fetch operation:",
-        error
-      );
+      console.error("There has been a problem with your fetch operation:", error);
     }
   }
 
@@ -55,12 +57,12 @@
 
   async function handleSaveChanges() {
     try {
-      const responseAll = await updateUser();
+      await updateUser();
       user.set(userForm);
+      showPopup('success', 'Success', 'Profile updated successfully');
     } catch (err) {
       console.error(err);
-      showAlert = true;
-      validationError = err.message || "Something went wrong";
+      showPopup('error', 'Error', err.message || "Failed to save changes");
     }
   }
 
@@ -77,28 +79,45 @@
     }
   }
 
-
   async function uploadAvatar() {
-    const formData = new FormData();
-    formData.append("avatar", file, file.name);
-    const imgResponse = await fetch(`${backendUrl}updateUserAvatar`, {
-      method: "POST",
-      credentials: "include",
-      body: formData
-    });
-    if (!imgResponse.ok) throw new Error("Failed to upload image");
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file, file.name);
+      const imgResponse = await fetch(`${backendUrl}updateUserAvatar`, {
+        method: "POST",
+        credentials: "include",
+        body: formData
+      });
+      if (!imgResponse.ok) throw new Error("Failed to upload image");
+      showPopup('success', 'Success', 'Avatar uploaded successfully');
+    } catch (err) {
+      console.error(err);
+      showPopup('error', 'Error', 'Failed to upload avatar');
+    }
   }
 
   async function deleteUser() {
-    const response = await fetch(`${backendUrl}user`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-    if (!response.ok) throw new Error("Failed to delete user");
-    
-    goto("/");
+    try {
+      const response = await fetch(`${backendUrl}deleteUser`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Failed to delete user");
+      goto("/");
+      showPopup('success', 'Success', 'User deleted successfully');
+    } catch (err) {
+      console.error(err);
+      showPopup('error', 'Error', 'Failed to delete user');
+    }
   }
 </script>
+
+<main>
+  {#if popup.show}
+    <Popup type={popup.type} title={popup.title} message={popup.message} />
+  {/if}
+</main>
+
 
 <main class="p-4 mt-16">
 
@@ -168,19 +187,9 @@
         />
       </div>
 
-      {#if showAlert}
-      <div
-        role="alert"
-        class="rounded border-s-4 border-red-500 bg-red-50 p-4 mb-4"
-      >
-        <strong class="block font-medium text-red-800">
-          Something went wrong
-        </strong>
-        <p class="mt-2 text-sm text-red-700">
-          {validationError}
-        </p>
-      </div>
-    {/if}
+      {#if popup.show}
+        <Popup type={popup.type} title={popup.title} message={popup.message} />
+      {/if}
 
       <div class="flex justify-between">
         <button type="submit" class="px-4 py-2 rounded bg-primary text-white"
