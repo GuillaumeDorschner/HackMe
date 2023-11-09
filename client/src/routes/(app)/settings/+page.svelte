@@ -6,11 +6,20 @@
   let backendUrl;
   let showAlert = false;
   let validationError = "";
-  let userForm;
+  let userForm = {
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+  };
   let file;
 
-  $: userForm = $user;
-
+  $: {
+    if (user !== undefined) {
+      userForm = $user;
+    }
+  }
+  
   onMount(() => {
     backendUrl = `http://${window.location.hostname}:3001/`;
   });
@@ -35,16 +44,19 @@
     }
   }
 
-  function handleFileChange(event) {
-    file = event.target.files[0];
+  async function handleFileChange(event) {
+    try {
+      file = event.target.files[0];
+      await uploadAvatar();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async function handleSaveChanges() {
     try {
-      await saveUserData();
-      if (file) await uploadAvatar();
-      console.log("Changes and image upload successful:", userForm);
-      updateUser(userForm);
+      const responseAll = await updateUser();
+      user.set(userForm);
     } catch (err) {
       console.error(err);
       showAlert = true;
@@ -52,15 +64,19 @@
     }
   }
 
-  async function saveUserData() {
+  async function updateUser() {
     const response = await fetch(`${backendUrl}updateUser`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userForm)
     });
-    if (!response.ok) throw new Error("Failed to save changes");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to save changes");
+    }
   }
+
 
   async function uploadAvatar() {
     const formData = new FormData();
