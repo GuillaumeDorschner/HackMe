@@ -158,10 +158,10 @@ app.post("/updateUser", async (req, res) => {
 
     if (userCookie) {
       const { password, email, first_name, last_name } = req.body;
-      const user = JSON.parse(userCookie)[0];
+      const user = JSON.parse(userCookie);
       const user_id = user.user_id;
 
-      if (!user_id || !password || !email || !first_name || !last_name) {
+      if (!user_id || !email || !first_name || !last_name) {
         res.status(400).json({ message: "Invalid Request" });
         return;
       }
@@ -175,19 +175,28 @@ app.post("/updateUser", async (req, res) => {
       const database = await connectDatabase();
 
       const emailCheckResult = await database.query(
-        `SELECT email FROM users WHERE email = '${email}';`
+        `SELECT email FROM users WHERE email = $1 AND user_id != $2;`,
+        [email, user_id]
       );
 
       if (emailCheckResult.rows.length > 0) {
         return res.status(400).json({ message: "Email already used" });
       }
 
-      const avatarPath = path.basename(req.file.path);
-      console.log(avatarPath);
+      let query = `UPDATE users SET email = $1, first_name = $2, last_name = $3`;
+      let values = [email, first_name, last_name];
+      let paramIndex = 4;
 
-      const result = await database.query(
-        `UPDATE users SET password = '${password}', email = '${email}', first_name = '${first_name}', last_name = '${last_name}', avatar = '${avatarPath}' WHERE user_id = '${user_id}' RETURNING *;`
-      );
+      if (password) {
+        query += `, password = $${paramIndex}`;
+        values.push(password);
+        paramIndex++;
+      }
+
+      query += ` WHERE user_id = $${paramIndex} RETURNING *;`;
+      values.push(user_id);
+
+      const result = await database.query(query, values);
 
       if (result.rows.length > 0) {
         res.cookie("user", JSON.stringify(result.rows[0]), {
@@ -215,11 +224,16 @@ app.post("/updateUserAvatar", upload.single("avatar"), async (req, res) => {
     const userCookie = req.cookies.user;
 
     if (userCookie) {
-      const user = JSON.parse(userCookie)[0];
+      const user = JSON.parse(userCookie);
       const user_id = user.user_id;
 
       if (!user_id) {
         res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      if (!req.file) {
+        res.status(400).json({ message: "No file uploaded" });
         return;
       }
 
@@ -228,9 +242,11 @@ app.post("/updateUserAvatar", upload.single("avatar"), async (req, res) => {
 
       const database = await connectDatabase();
 
-      const result = await database.query(
-        `UPDATE users SET avatar = '${avatarPath}' WHERE user_id = '${user_id}' RETURNING *;`
-      );
+      const query = {
+        text: `UPDATE users SET avatar = $1 WHERE user_id = $2 RETURNING *;`,
+        values: [avatarPath, user_id],
+      };
+      const result = await database.query(query);
 
       if (result.rows.length > 0) {
         res.cookie("user", JSON.stringify(result.rows[0]), {
@@ -252,39 +268,6 @@ app.post("/updateUserAvatar", upload.single("avatar"), async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
-app.delete("/user", async (req, res) => {
-  try {
-    const userCookie = req.cookies.user;
-    
-    if (userCookie) {
-      const user = JSON.parse(userCookie)[0];
-      const user_id = user.user_id;
-
-      if (!user_id) {
-        res.status(400).json({ message: "Invalid Request" });
-        return;
-      }
-
-      const database = await connectDatabase();
-
-      const result = await database.query(
-        `DELETE FROM users WHERE user_id = '${user_id}' RETURNING *;`
-      );
-
-      if (result.rows.length > 0) {
-        res.clearCookie("user");
-        res.status(200).json({ message: "User deleted successfully", user: result.rows[0] });        
-      }
-    } else {
-      res.status(401).json({ message: "Unauthorized" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
 
 app.get("/logout", (req, res) => {
   res.clearCookie("user");
@@ -380,7 +363,7 @@ app.post("/write", async (req, res) => {
 
     if (userCookie) {
       const { title, content } = req.body;
-      const user = JSON.parse(userCookie)[0];
+      const user = JSON.parse(userCookie);
       const user_id = user.user_id;
 
       if (!user_id || !title || !content) {
@@ -425,7 +408,7 @@ app.post("/addComment", async (req, res) => {
 
     if (userCookie) {
       const { post_id, content } = req.body;
-      const user = JSON.parse(userCookie)[0];
+      const user = JSON.parse(userCookie);
       const user_id = user.user_id;
 
       if (!post_id || !content) {
@@ -464,7 +447,7 @@ app.post("/likePost", async (req, res) => {
 
     if (userCookie) {
       const { post_id } = req.body;
-      const user = JSON.parse(userCookie)[0];
+      const user = JSON.parse(userCookie);
       const user_id = user.user_id;
 
       if (!post_id) {
