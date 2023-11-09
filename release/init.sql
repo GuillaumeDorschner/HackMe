@@ -57,17 +57,18 @@ VALUES
 
 INSERT INTO comments (user_id, post_id, content)
 VALUES
-(1, 1, 'Great post!'),
-(2, 1, 'Thanks for sharing'),
-(3, 2, 'Very insightful'),
-(4, 3, 'I learned a lot'),
-(1, 4, 'Love this!'),
-(2, 5, 'Nature is wonderful'),
-(3, 6, 'Tell us more about your invention'),
-(4, 6, 'That sounds amazing'),
-(5, 7, 'Photography is an art'),
-(6, 8, 'Team Batman all the way'),
-(7, 8, 'Superman would definitely win');
+(1, 1, 'First!'),
+(1, 2, 'Great post!'),
+(2, 2, 'Thanks for sharing'),
+(3, 3, 'Very insightful'),
+(4, 4, 'I learned a lot'),
+(1, 5, 'Love this!'),
+(2, 6, 'Nature is wonderful'),
+(3, 7, 'Tell us more about your invention'),
+(4, 7, 'That sounds amazing'),
+(5, 8, 'Photography is an art'),
+(6, 9, 'Team Batman all the way'),
+(7, 9, 'Superman would definitely win');
 
 INSERT INTO likes (post_id, user_id)
 VALUES
