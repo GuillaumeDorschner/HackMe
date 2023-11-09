@@ -60,7 +60,7 @@ app.post("/login", async (req, res) => {
     );
 
     if (result.rows.length > 0) {
-      res.cookie("user", JSON.stringify(result.rows), {
+      res.cookie("user", JSON.stringify(result.rows[0]), {
         maxAge: 3600000 * 24,
         httpOnly: false,
         secure: false,
