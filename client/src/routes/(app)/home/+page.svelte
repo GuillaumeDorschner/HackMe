@@ -1,8 +1,6 @@
 <script>
   import { user, posts } from "../../../store/store.js";
-  import { get } from "svelte/store";
   import { onMount } from "svelte";
-  import { goto } from "$app/navigation";
 
   let backendUrl;
   let loading = true;
