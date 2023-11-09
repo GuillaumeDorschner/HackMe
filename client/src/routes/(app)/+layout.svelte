@@ -23,7 +23,7 @@
         throw new Error("Network response was not ok " + response.statusText);
       }
       let data = await response.json();
-      user.set(data.user[0]);
+      user.set(data.user);
       loading = false;
     } catch (error) {
       console.error(
