@@ -1,5 +1,6 @@
 <script>
   import { user, posts } from "../../../store/store.js";
+  import { get } from "svelte/store";
   import { onMount } from "svelte";
   import Popup from "../../../components/Popup.svelte";
 
