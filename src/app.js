@@ -486,6 +486,44 @@ app.post("/likePost", async (req, res) => {
   }
 });
 
+app.delete("/deleteUser", async (req, res) => {
+  try {
+    const userCookie = req.cookies.user;
+
+    if (userCookie) {
+      const user = JSON.parse(userCookie);
+      const user_id = user.user_id;
+
+      if (!user_id) {
+        res.status(400).json({ message: "Invalid Request" });
+        return;
+      }
+
+      const database = await connectDatabase();
+
+      const query = `
+        DELETE FROM users WHERE user_id = ${user_id} RETURNING *;
+      `;
+
+      const result = await database.query(query);
+
+      if (result.rows.length > 0) {
+        res.clearCookie("user");
+        res.status(200).json({
+          message: "Account deleted successfully",
+        });
+      } else {
+        res.status(500).json({ message: "Error deleting account" });
+      }
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 app.use("/api/v1", api);
 app.use(notFound);
 app.use(errorHandler);
