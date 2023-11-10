@@ -182,14 +182,13 @@ app.post("/updateUser", async (req, res) => {
         return res.status(400).json({ message: "Email already used" });
       }
 
-      let query = `UPDATE users SET email = '${email}', first_name = ${first_name}, last_name = '${last_name}'`;
+      let query = `UPDATE users SET email = '${email}', first_name = '${first_name}', last_name = '${last_name}'`;
 
       if (password) {
         query += `, password = '${password}'`;
       }
 
       query += ` WHERE user_id = '${user_id}' RETURNING *;`;
-      values.push(user_id);
 
       const result = await database.query(query);
 
