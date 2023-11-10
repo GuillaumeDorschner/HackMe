@@ -17,9 +17,9 @@
     export let message = '';
   
     $: cssClasses = {
-      'success': 'rounded border-s-4 border-green-100 bg-green-50',
-      'warning': 'rounded border-s-4 border-yellow-500 bg-yellow-50',
-      'error': 'rounded border-s-4 border-red-500 bg-red-50'
+      'success': 'border-green-100 bg-green-50',
+      'warning': 'border-yellow-500 bg-yellow-50',
+      'error': 'border-red-500 bg-red-50'
     }[type];
   
     $: iconClasses = {
@@ -29,7 +29,7 @@
     }[type];
   </script>
   
-  <div role="alert" class={cssClasses}>
+  <div role="alert" class="my-4 p-2 rounded border-s-4 {cssClasses}">
     <div class="flex items-start gap-4">
       <div class="flex-1">
         <strong class="block font-medium text-gray-900">{title}</strong>
