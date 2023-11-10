@@ -3,23 +3,23 @@
   import { onMount } from "svelte";
 
   onMount(() => {
-    const card = document.querySelector('.card');
-  const container = document.querySelector('.card-container');
+    const card = document.querySelector(".card");
+    const container = document.querySelector(".card-container");
 
-  container.addEventListener('mousemove', (e) => {
-    let xAxis = -(window.innerWidth / 2 - e.pageX) / 140;
-    let yAxis = (window.innerHeight / 2 - e.pageY) / 140;
-    card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-  });
+    container.addEventListener("mousemove", (e) => {
+      let xAxis = -(window.innerWidth / 2 - e.pageX) / 140;
+      let yAxis = (window.innerHeight / 2 - e.pageY) / 140;
+      card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+    });
 
-  container.addEventListener('mouseenter', (e) => {
-    card.style.transition = "none";
-  });
+    container.addEventListener("mouseenter", (e) => {
+      card.style.transition = "none";
+    });
 
-  container.addEventListener('mouseleave', (e) => {
-    card.style.transition = "transform 0.2s";
-    card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-  });
+    container.addEventListener("mouseleave", (e) => {
+      card.style.transition = "transform 0.2s";
+      card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+    });
   });
 </script>
 
@@ -48,38 +48,41 @@
       </div>
     </header>
 
-    <div class="">
-      <section class="min-h-96 relative flex flex-1 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 py-16 shadow-lg md:py-20 xl:py-48">
-        <!-- <div class="card-container">
-          <section class="card shadow-xl shadow-primary min-h-96 relative flex flex-1 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 py-16 shadow-lg md:py-20 xl:py-48"> -->
+    <!-- <div class="">
+      <section
+        class="min-h-96 relative flex flex-1 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 py-16 shadow-lg md:py-20 xl:py-48"
+      > -->
+        <div class="card-container">
+          <section class="card shadow-xl min-h-96 relative flex flex-1 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 py-16 shadow-lg md:py-20 xl:py-48">
 
-      <img
-        src="https://plus.unsplash.com/premium_photo-1670884128248-858c56bdb838?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
-        loading="lazy"
-        alt="girls"
-        class="absolute inset-0 h-full w-full object-cover object-center"
-      />
+        <img
+          src="https://plus.unsplash.com/premium_photo-1670884128248-858c56bdb838?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+          loading="lazy"
+          alt="girls"
+          class="absolute inset-0 h-full w-full object-cover object-center"
+        />
 
-      <div class="absolute inset-0 bg-secondary mix-blend-multiply" />
+        <div class="absolute inset-0 bg-secondary mix-blend-multiply" />
 
-      <div class="relative flex flex-col items-center p-4 sm:max-w-xl">
-        <h1
-          class="mb-8 text-center text-4xl font-bold text-white sm:text-5xl md:mb-12 md:text-6xl"
-        >
-          Easy, simple like the good old days
-        </h1>
-
-        <div class="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center">
-          <a
-            href="/signup"
-            class="inline-block rounded-lg bg-primary px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-tone transition duration-100 hover:bg-secondary focus-visible:ring active:bg-secondary md:text-base"
-            >Start now</a
+        <div class="relative flex flex-col items-center p-4 sm:max-w-xl">
+          <h1
+            class="mb-8 text-center text-4xl font-bold text-white sm:text-5xl md:mb-12 md:text-6xl"
           >
-        </div>
-      </div>
+            Easy, simple like the good old days
+          </h1>
 
-    </section>
-  </div>
+          <div
+            class="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center"
+          >
+            <a
+              href="/signup"
+              class="inline-block rounded-lg bg-primary px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-tone transition duration-100 hover:bg-secondary focus-visible:ring active:bg-secondary md:text-base"
+              >Start now</a
+            >
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 </div>
 
@@ -892,7 +895,6 @@
     </div>
   </div>
 </footer>
-
 
 <style>
   .card-container {
