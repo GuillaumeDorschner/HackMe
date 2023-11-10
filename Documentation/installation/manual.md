@@ -20,7 +20,7 @@ npm install && npm run client-install
 ```
 1. Run `npm run database` to setup the database
 ```bash
-npm run database:init
+npm run database
 ```
 1. Run `npm run dev` to start the development server
 ```bash

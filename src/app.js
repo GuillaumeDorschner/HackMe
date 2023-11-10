@@ -175,28 +175,22 @@ app.post("/updateUser", async (req, res) => {
       const database = await connectDatabase();
 
       const emailCheckResult = await database.query(
-        `SELECT email FROM users WHERE email = $1 AND user_id != $2;`,
-        [email, user_id]
+        `SELECT email FROM users WHERE email = '${email}' AND user_id != ${user_id};`
       );
 
       if (emailCheckResult.rows.length > 0) {
         return res.status(400).json({ message: "Email already used" });
       }
 
-      let query = `UPDATE users SET email = $1, first_name = $2, last_name = $3`;
-      let values = [email, first_name, last_name];
-      let paramIndex = 4;
+      let query = `UPDATE users SET email = '${email}', first_name = '${first_name}', last_name = '${last_name}'`;
 
       if (password) {
-        query += `, password = $${paramIndex}`;
-        values.push(password);
-        paramIndex++;
+        query += `, password = '${password}'`;
       }
 
-      query += ` WHERE user_id = $${paramIndex} RETURNING *;`;
-      values.push(user_id);
+      query += ` WHERE user_id = '${user_id}' RETURNING *;`;
 
-      const result = await database.query(query, values);
+      const result = await database.query(query);
 
       if (result.rows.length > 0) {
         res.cookie("user", JSON.stringify(result.rows[0]), {
@@ -241,7 +235,7 @@ app.post("/updateUserAvatar", upload.single("avatar"), async (req, res) => {
       console.log(avatarPath);
 
       const database = await connectDatabase();
-
+ 
       const query = {
         text: `UPDATE users SET avatar = $1 WHERE user_id = $2 RETURNING *;`,
         values: [avatarPath, user_id],
@@ -375,13 +369,11 @@ app.post("/write", async (req, res) => {
 
       const query = `
         INSERT INTO posts (user_id, title, content) 
-        VALUES ($1, $2, $3) 
+        VALUES ('${user_id}', '${title}', '${content}') 
         RETURNING *;
       `;
 
-      const values = [user_id, title, content];
-
-      const result = await database.query(query, values);
+      const result = await database.query(query);
 
       if (result.rows.length > 0) {
         res.status(200).json({
@@ -418,8 +410,7 @@ app.post("/addComment", async (req, res) => {
 
       const database = await connectDatabase();
       const result = await database.query(
-        `INSERT INTO comments (user_id, post_id, content) VALUES ($1, $2, $3) RETURNING *;`,
-        [user_id, post_id, content]
+        `INSERT INTO comments (user_id, post_id, content) VALUES ('${user_id}', '${post_id}', '${content}') RETURNING *;`
       );
 
       if (result.rows.length > 0) {
@@ -473,7 +464,7 @@ app.post("/likePost", async (req, res) => {
         });
       } else {
         const insertQuery =
-          "INSERT INTO likes (user_id, post_id) VALUES ($1, $2) RETURNING *;";
+          `INSERT INTO likes (user_id, post_id) VALUES ($1, $2) RETURNING *;`;
         const insertResult = await database.query(insertQuery, [
           user_id,
           post_id,
@@ -487,7 +478,7 @@ app.post("/likePost", async (req, res) => {
     } else {
       return res
         .status(401)
-        .json({ message: "You must be logged in to create a like" });
+        .json({ message: "You must be logged in to see likes" });
     }
   } catch (error) {
     console.error(error);
