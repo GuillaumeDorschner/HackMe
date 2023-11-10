@@ -10,7 +10,6 @@
   onMount(async () => {
     backendUrl = `http://${window.location.hostname}:3001/`;
     await fetchPosts();
-    console.log($user);
   });
 
   let popup = { show: false, type: '', title: '', message: '' };
@@ -99,7 +98,6 @@
         throw new Error("Network response was not ok " + response.statusText);
       }
       const data = await response.json();
-      console.log(data);
 
       posts.update((postsArray) => {
         const updatedPosts = postsArray.map((post) => {
