@@ -2,9 +2,9 @@
   import { onMount } from "svelte";
   import Popup from "../../../components/Popup.svelte";
 
-  let Post = {
-    Title : "",
-    Content : ""
+  let post = {
+    title : "",
+    content : ""
   };
   let backendUrl;
 
@@ -23,10 +23,9 @@
     try {
       const response = await fetch(`${backendUrl}write`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({title: Post.Title, content: Post.Content})
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({title: post.title, content: post.content})
       });
       
       if (!response.ok) {
@@ -43,8 +42,8 @@
   }
 
   function Reset() {
-    Post.Title = "";
-    Post.Content = "";
+    post.title = "";
+    post.content = "";
   }
 </script>
 
@@ -54,20 +53,20 @@
     
     <form on:submit|preventDefault={Upload}>
       <div class="mb-4">
-        <label for="Title" class="block text-sm font-medium text-gray-600">Enter the title of your post</label>
+        <label for="title" class="block text-sm font-medium text-gray-600">Enter the title of your post</label>
         <textarea 
-          id="Title" 
-          bind:value={Post.Title} 
+          id="title" 
+          bind:value={post.title} 
           rows="1" 
           class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
         ></textarea>
       </div>
 
       <div class="mb-4">
-        <label for="Content" class="block text-sm font-medium text-gray-600">Create a post</label>
+        <label for="content" class="block text-sm font-medium text-gray-600">Create a post</label>
         <textarea 
-          id="Content" 
-          bind:value={Post.Content} 
+          id="content" 
+          bind:value={post.content} 
           rows="10" 
           class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
         ></textarea>
