@@ -11,7 +11,7 @@ Begin your journey into ethical hacking by deploying HackMe through one of the f
 
 ## 🧙🏻 Hacking
 
-The Hack section is [there](Documentation/hack.md)
+The Hack section is [there](Documentation/hack/README.md)
 
 ## 🛠️ Developer's Corner
 

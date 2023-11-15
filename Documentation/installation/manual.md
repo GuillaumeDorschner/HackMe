@@ -27,7 +27,7 @@ npm run database
 npm run dev
 ```
 1. Navigate to `localhost:3000` in your browser to view the platform
-2. Congratulations 🎉, you've successfully deployed HackMe! Dive into the world of ethical hacking by starting --> [here](/Documentation/hack.md).
+2. Congratulations 🎉, you've successfully deployed HackMe! Dive into the world of ethical hacking by starting --> [here](../hack/README.md).
 
 
 ---
