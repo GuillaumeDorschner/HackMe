@@ -21,7 +21,7 @@ All the vulnerabilities listed below are essential to know when it comes to web 
 
 - [HTTP](http.md)
   *Utilize Wireshark for sniffing passwords, usernames, and other sensitive data.*
-- [Lack of Rate Limiting (DDoS)](lack-of-rate-limiting.md)
+- [Lack of Rate Limiting (DDoS)](ddos.md)
   *Potentially looping through the site with multiple computers or renting servers to crash the site.*
 - [No Logging](no-logging.md)
   *Absence of event logging, making malicious activities difficult to trace.*

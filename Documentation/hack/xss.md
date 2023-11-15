@@ -31,7 +31,7 @@ Injection with the script
       id: 1,
       author: "John Doe",
       content: "This is my first post! <script>alert('hey');</script> This is my first",
-      timestamp: "2023-01-01T12:00:00",
+      timestamp: "2023-01-01T12:00:00",         
       likes: 20,
       comments: [
         {

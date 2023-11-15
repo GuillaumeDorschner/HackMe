@@ -2,38 +2,45 @@
 
 ## Definition
 
-HTTP stands for Hypertext Transfer Protocol and is the foundation of data communication on the World Wide Web. It is a protocol used for transmitting hypermedia documents, such as HTML. It follows a classical client-server model where the client requests resources and the server provides them.
+HTTP, which stands for Hypertext Transfer Protocol, is the foundation of data communication for the World Wide Web. It is a protocol used to transmit hypermedia documents, such as HTML, and follows a classic client-server model where the client requests resources, and the server responds with the requested information.
 
 ## How It Works
 
-When a user enters a URL in this browser or clicks a hyperlink, an HTTP command is sent to the Web server directing it to fetch and transmit the requested Web page. The server then sends the content back to the IP address specified by the client in the HTTP request.
+A user either enters a URL in their browser or clicks a hyperlink, which initiates an HTTP command to the web server, instructing it to fetch and transmit the requested web page. The server then sends the content back to the client's IP address.
 
 ## Security Concerns
 
-HTTP is not secure on its own because it sends data in plaintext. This means that any data transferred over HTTP is susceptible to eavesdropping and interception. This can include sensitive data like login credentials, personal information, and other confidential data.
+HTTP is inherently insecure because it transmits data in plaintext, making any transferred data susceptible to eavesdropping and interception. This can include sensitive information like login credentials, personal details, and confidential data.
 
 ## Detection
 
-Wireshark can be used to detect HTTP traffic on a network. By capturing and analyzing packets, Wireshark can reveal the details of the HTTP communication, including the request and response headers and the body of the message.
+When a site doesn't have HTTPS, browsers typically show a warning with a crossed-out lock icon or display "Not Secure" in red near the address bar.
+![Browser Warning Image](https://github.com/GuillaumeDorschner/HackMe/assets/44686652/fd278ab8-4330-4d8f-a0d9-e360bc357a97)
 
 ## Prevention
 
-The primary method of preventing security issues with HTTP is to use HTTPS (HTTP Secure), which encrypts the data transmitted between the client and server. Implementing security measures like SSL/TLS can ensure that even if traffic is intercepted, it cannot be easily deciphered.
+The most effective method to address HTTP security issues is to use HTTPS (HTTP Secure), which encrypts the data in transit between client and server. Implementing security measures like SSL/TLS ensures that intercepted traffic is not easily readable.
+
+Services like Let's Encrypt provide free SSL/TLS certificates, facilitating a more secure web. Using tools such as Certbot can automate certificate issuance and installation, removing much of the complexity involved in manually setting up HTTPS.
+
+While self-signed certificates can also encrypt data, they do not provide verification of the server's identity and can lead to trust issues with clients. For internal testing or private networks, a self-signed certificate can be sufficient, but for public websites, a Certificate Authority (CA)-issued certificate is recommended. If using a self-signed certificate, the corresponding CA must be installed on the client's device to avoid security warnings.
 
 ## Example Scenarios
 
-An example of the risks of HTTP is when a user logs into a website without HTTPS. If the login credentials are sent over HTTP, they could potentially be captured by an attacker monitoring the network traffic.
+A common HTTP risk scenario is when a user logs into a site without HTTPS. If the credentials are sent over HTTP, they could be intercepted by an attacker monitoring the network traffic.
 
 ## References
 
 - [HTTP on MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTTP)
 - [HTTP vs. HTTPS on Cloudflare](https://www.cloudflare.com/learning/ssl/why-use-https/)
+- [Let's Encrypt](https://letsencrypt.org/)
+- [Certbot](https://certbot.eff.org/)
 
 ## How to Use Wireshark for Network Monitoring
 
-1. **Install Wireshark**: Download and install it from the official [Wireshark website](https://www.wireshark.org/).
-2. **Capture Traffic**: Open Wireshark, select your network interface, and start capturing traffic.
-3. **Filter HTTP Traffic**: Use the filter `http` to display only HTTP packets.
-4. **Analyze Packets**: Look through the details of each packet to see the unencrypted information being sent and received.
+1. **Install Wireshark**: Obtain the application from the official [Wireshark website](https://www.wireshark.org/).
+2. **Capture Traffic**: Launch Wireshark, select your network interface, and begin capturing packets.
+3. **Filter for HTTP Traffic**: Apply the filter `http` to isolate HTTP packets.
+4. **Analyze the Packets**: Inspect the details within each packet to view the unencrypted information being sent and received.
 
-Please note that monitoring network traffic may be subject to legal and ethical guidelines. Always ensure you have permission to capture and analyze network traffic, especially when it involves potentially sensitive data.
+Remember, network traffic analysis, particularly involving sensitive data, must comply with legal and ethical standards. Always ensure you have the necessary permissions to capture and review network traffic.
