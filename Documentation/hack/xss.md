@@ -54,5 +54,6 @@ In this case, the hacker executes a script on your webpage which could potential
 
 Please replace the links with the correct URLs where the images are hosted. If the images are not publicly accessible, they will not be displayed correctly in the Markdown file. Also, ensure that the JavaScript object is correctly formatted within the code block if you want it to display properly.
 
-## How to hack 😈
+## How to do it ?
 
+DO .....
