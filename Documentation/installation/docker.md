@@ -21,7 +21,7 @@ Deploy HackMe effortlessly with a pre-built Docker image from Docker Hub. The ap
 
 2. Navigate to `localhost:3000` in your browser to view the platform
 
-3. Congratulations 🎉, you've successfully deployed HackMe using a Docker image from Docker Hub! Dive into the world of ethical hacking by starting --> [here](/Documentation/hack.md).
+3. Congratulations 🎉, you've successfully deployed HackMe using a Docker image from Docker Hub! Dive into the world of ethical hacking by starting --> [here](../hack/README.md).
     
     </br>
 
