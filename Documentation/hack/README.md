@@ -4,6 +4,8 @@
 
 All the vulnerabilities listed below are essential to know when it comes to web security. These vulnerabilities are the most common and are the most likely to be exploited. It is important to know how to prevent these vulnerabilities from being exploited and how to fix them if they are exploited.
 
+⚠️ **Warning:** The exploration and handling of web vulnerabilities must comply with legal and ethical standards. Always ensure you have the necessary permissions and understand the implications of probing and testing vulnerabilities in any system or network. Unauthorized testing or exploitation of vulnerabilities can lead to legal consequences and ethical breaches. ⚠️
+
 - [XSS (Cross-Site Scripting)](xss.md)
   *Injecting malicious scripts into web pages viewed by other users.*
 - [RAFI (Remote File Inclusion)](rafi.md)

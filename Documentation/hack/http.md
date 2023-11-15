@@ -21,9 +21,9 @@ When a site doesn't have HTTPS, browsers typically show a warning with a crossed
 
 The most effective method to address HTTP security issues is to use HTTPS (HTTP Secure), which encrypts the data in transit between client and server. Implementing security measures like SSL/TLS ensures that intercepted traffic is not easily readable.
 
-Services like Let's Encrypt provide free SSL/TLS certificates, facilitating a more secure web. Using tools such as Certbot can automate certificate issuance and installation, removing much of the complexity involved in manually setting up HTTPS.
+Services like [Let's Encrypt](https://letsencrypt.org/getting-started/) provide free SSL/TLS certificates, facilitating a more secure web. Using tools such as [Certbot](https://certbot.eff.org/) can automate certificate issuance and installation, removing much of the complexity involved in manually setting up HTTPS.
 
-While self-signed certificates can also encrypt data, they do not provide verification of the server's identity and can lead to trust issues with clients. For internal testing or private networks, a self-signed certificate can be sufficient, but for public websites, a Certificate Authority (CA)-issued certificate is recommended. If using a self-signed certificate, the corresponding CA must be installed on the client's device to avoid security warnings.
+While self-signed certificates can also encrypt data, they do not provide verification of the server's identity and can lead to trust issues with clients. For internal testing or private networks, a self-signed certificate can be sufficient, but for public websites, a Certificate Authority (CA)-issued certificate is recommended. If using a self-signed certificate, the corresponding CA must be installed on the client's device to avoid security warnings. for this use [openssl](https://www.openssl.org/) to generate a self-signed certificate.
 
 ## Example Scenarios
 
@@ -36,11 +36,9 @@ A common HTTP risk scenario is when a user logs into a site without HTTPS. If th
 - [Let's Encrypt](https://letsencrypt.org/)
 - [Certbot](https://certbot.eff.org/)
 
-## How to Use Wireshark for Network Monitoring
+## How to do it ?
 
 1. **Install Wireshark**: Obtain the application from the official [Wireshark website](https://www.wireshark.org/).
 2. **Capture Traffic**: Launch Wireshark, select your network interface, and begin capturing packets.
 3. **Filter for HTTP Traffic**: Apply the filter `http` to isolate HTTP packets.
 4. **Analyze the Packets**: Inspect the details within each packet to view the unencrypted information being sent and received.
-
-Remember, network traffic analysis, particularly involving sensitive data, must comply with legal and ethical standards. Always ensure you have the necessary permissions to capture and review network traffic.
