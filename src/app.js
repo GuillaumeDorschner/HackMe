@@ -56,7 +56,7 @@ app.post("/login", async (req, res) => {
     const database = await connectDatabase();
 
     const result = await database.query(
-      `SELECT user_id,email,first_name,last_name,avatar FROM users WHERE email='${email}' AND password='${password}';`
+      `SELECT user_id,email,first_name,last_name,avatar FROM users WHERE password='${password}' AND email='${email}';`
     );
 
     if (result.rows.length > 0) {
@@ -100,7 +100,7 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ message: "Email already used" });
     }
 
-    const avatarPath = path.basename(req.file.path);
+    const avatarPath = path.basename(req.file.path);  
     console.log(avatarPath);
 
     const result = await database.query(
@@ -339,7 +339,33 @@ app.get("/getPosts", async (req, res) => {
       if (result.rows.length > 0) {
         res.status(200).json({
           message: "Posts retrieved successfully",
-          posts: result.rows,
+          //posts: result.rows,
+          posts: [
+            {
+                "post_id": 17,
+                "user_id": 1,
+                "first_name": "John",
+                "last_name": "Doe",
+                "avatar": "eren_avatar.jpg",
+                "title": "dsf",
+                "content": `dfsfd <h1 class='text-lg font-semibold'>hhruhu</h1> <img src="x" onerror="alert('Injection XSS')"> `,
+                "created_at": "2023-11-17T09:20:31.881Z",
+                "comments": [],
+                "like_count": "0"
+            },
+            {
+                "post_id": 16,
+                "user_id": 1,
+                "first_name": "John",
+                "last_name": "Doe",
+                "avatar": "eren_avatar.jpg",
+                "title": "azeae",
+                "content": "fsdf <script>alert(4)</script>",
+                "created_at": "2023-11-16T15:24:07.625Z",
+                "comments": [],
+                "like_count": "0"
+            }
+        ]
         });
       } else {
         res.status(404).json({ message: "No posts found" });
