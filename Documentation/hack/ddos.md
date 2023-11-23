@@ -37,3 +37,4 @@ A typical DDoS scenario involves an attacker controlling a botnet to send more r
 
 - [MHDDoS](https://github.com/MatrixTM/MHDDoS)
 - [JMeter](https://jmeter.apache.org/)
+- Create your own botnet to spam the target

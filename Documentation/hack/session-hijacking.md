@@ -1,4 +1,4 @@
-# Session Hijacking
+# Session / Cookie Hijacking
 
 ## Definition
 
@@ -28,7 +28,7 @@ To prevent session hijacking:
 
 ## Example Scenarios
 
-A common example is when an attacker intercepts a user's session cookie through an unsecured Wi-Fi network and then uses it to access the user's account on a web application.
+A common example is when an attacker intercepts a user's session cookie through an unsecured Wi-Fi network [(see http)](./http.md) and then uses it to access the user's account on a web application.
 
 ## References
 
@@ -37,4 +37,8 @@ A common example is when an attacker intercepts a user's session cookie through 
 
 ## How to do it ?
 
-DO ...
+1. **See http** : [http](./http.md#how-to-do-it-)
+2. **Find the Cookie**: Locate the `Set-Cookie` header in the HTTP response packet.
+3. **Copy the Cookie**: Copy the value of the `Set-Cookie` header.
+4. **Use the Cookie**: Use the cookie to impersonate the user and gain access to their account.
+5. **Log in as the User**: Log in as the user whose cookie you stole.
