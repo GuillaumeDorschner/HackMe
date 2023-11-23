@@ -339,33 +339,7 @@ app.get("/getPosts", async (req, res) => {
       if (result.rows.length > 0) {
         res.status(200).json({
           message: "Posts retrieved successfully",
-          //posts: result.rows,
-          posts: [
-            {
-                "post_id": 17,
-                "user_id": 1,
-                "first_name": "John",
-                "last_name": "Doe",
-                "avatar": "eren_avatar.jpg",
-                "title": "dsf",
-                "content": `dfsfd <h1 class='text-lg font-semibold'>hhruhu</h1> <img src="x" onerror="alert('Injection XSS')"> `,
-                "created_at": "2023-11-17T09:20:31.881Z",
-                "comments": [],
-                "like_count": "0"
-            },
-            {
-                "post_id": 16,
-                "user_id": 1,
-                "first_name": "John",
-                "last_name": "Doe",
-                "avatar": "eren_avatar.jpg",
-                "title": "azeae",
-                "content": "fsdf <script>alert(4)</script>",
-                "created_at": "2023-11-16T15:24:07.625Z",
-                "comments": [],
-                "like_count": "0"
-            }
-        ]
+          posts: result.rows,
         });
       } else {
         res.status(404).json({ message: "No posts found" });
