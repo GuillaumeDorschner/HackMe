@@ -368,12 +368,13 @@ app.post("/write", async (req, res) => {
       const database = await connectDatabase();
 
       const query = `
-        INSERT INTO posts (user_id, title, content) 
-        VALUES ('${user_id}', '${title}', '${content}') 
-        RETURNING *;
-      `;
+      INSERT INTO posts (user_id, title, content) 
+      VALUES ($1, $2, $3) 
+      RETURNING *;
+    `;
+    const values = [user_id, title, content];
 
-      const result = await database.query(query);
+      const result = await database.query(query,values);
 
       if (result.rows.length > 0) {
         res.status(200).json({
