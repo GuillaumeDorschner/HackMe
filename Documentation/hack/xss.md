@@ -54,7 +54,7 @@ In this case, the hacker executes a script on your webpage which could potential
 
 Please replace the links with the correct URLs where the images are hosted. If the images are not publicly accessible, they will not be displayed correctly in the Markdown file. Also, ensure that the JavaScript object is correctly formatted within the code block if you want it to display properly.
 
-## How to do it ?
+## How to do it ? (deprecate: probleme of frameword don't allow it)
 
 You need to write a blog post with a comment section. The comment section must be vulnerable to XSS. like this:
 
