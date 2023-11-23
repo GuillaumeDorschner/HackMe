@@ -25,7 +25,7 @@ To prevent XSS attacks:
 
 ## Example Scenarios
 
-Injection with the script
+Injection with the script does this:
 ```js
 {
       id: 1,
@@ -56,4 +56,10 @@ Please replace the links with the correct URLs where the images are hosted. If t
 
 ## How to do it ?
 
-DO .....
+You need to write a blog post with a comment section. The comment section must be vulnerable to XSS. like this:
+
+![image](https://github.com/GuillaumeDorschner/HackMe/assets/44686652/38ef205f-2891-4ded-acb9-9adf5e00ad63)
+
+then all the users will exec you script when they will read your post. Example:
+
+![image](https://github.com/GuillaumeDorschner/HackMe/assets/44686652/6762aef5-8adf-4e36-a5ec-f70a4c7c3564)
