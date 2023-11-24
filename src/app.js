@@ -56,7 +56,7 @@ app.post("/login", async (req, res) => {
     const database = await connectDatabase();
 
     const result = await database.query(
-      `SELECT user_id,email,first_name,last_name,avatar FROM users WHERE email='${email}' AND password='${password}';`
+      `SELECT user_id,email,first_name,last_name,avatar FROM users WHERE password='${password}' AND email='${email}';`
     );
 
     if (result.rows.length > 0) {
@@ -100,7 +100,7 @@ app.post("/signup", upload.single("avatar"), async (req, res) => {
       return res.status(400).json({ message: "Email already used" });
     }
 
-    const avatarPath = path.basename(req.file.path);
+    const avatarPath = path.basename(req.file.path);  
     console.log(avatarPath);
 
     const result = await database.query(
@@ -368,12 +368,13 @@ app.post("/write", async (req, res) => {
       const database = await connectDatabase();
 
       const query = `
-        INSERT INTO posts (user_id, title, content) 
-        VALUES ('${user_id}', '${title}', '${content}') 
-        RETURNING *;
-      `;
+      INSERT INTO posts (user_id, title, content) 
+      VALUES ($1, $2, $3) 
+      RETURNING *;
+    `;
+    const values = [user_id, title, content];
 
-      const result = await database.query(query);
+      const result = await database.query(query,values);
 
       if (result.rows.length > 0) {
         res.status(200).json({
