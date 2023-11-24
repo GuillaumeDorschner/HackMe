@@ -1,0 +1,29 @@
+# No logging
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/58bb6cec-d2bb-405d-a3b7-c56faff65963/111ce7bc-45d7-41b5-ae5f-448ee26ed378/Untitled.png)
+
+La faille "no logging" est plus une lacune dans la sécurité qu'une faille technique spécifique. Elle se réfère à l'absence ou à l'insuffisance de l'enregistrement (logging) des activités, événements ou erreurs dans un système, une application ou un réseau.
+
+Les journaux (logs) sont essentiels pour la sécurité des systèmes informatiques. Ils enregistrent les activités et les événements, ce qui permet aux administrateurs et aux équipes de sécurité de surveiller, d'analyser et de comprendre ce qui se passe sur le réseau ou dans les applications. Ils peuvent aider à détecter des activités suspectes, à résoudre les problèmes et à répondre aux incidents de sécurité.
+
+La faille "no logging" survient lorsque :
+
+1. **Absence de logs :** Aucun enregistrement des activités ou événements n'est effectué. En cas d'incident de sécurité, il devient alors difficile voire impossible de retracer les actions qui ont conduit à cet incident.
+2. **Logs insuffisants :** Les systèmes enregistrent des données, mais de manière insuffisante. Par exemple, ils pourraient ne pas enregistrer les détails nécessaires pour une analyse complète des incidents, tels que les tentatives d'accès non autorisées, les erreurs de sécurité, les modifications effectuées dans le système, etc.
+
+Les conséquences de cette faille peuvent être graves : difficulté à détecter et à répondre rapidement aux incidents de sécurité, absence de preuves ou de traces pour enquêter sur les activités suspectes, et incapacité à se conformer aux réglementations ou aux normes de sécurité qui exigent la tenue de journaux d'activité.
+
+Pour remédier à cette faille, il est essentiel de mettre en place une stratégie complète de logging :
+
+1. **Définir les besoins de logging :** Identifier quels événements doivent être enregistrés en fonction des besoins de sécurité et des exigences réglementaires.
+2. **Implémenter un logging adéquat :** Configurer les systèmes pour enregistrer les événements pertinents de manière complète et sécurisée.
+3. **Surveiller et analyser les logs :** Mettre en place des outils et des processus pour surveiller régulièrement les logs, analyser les activités suspectes et répondre rapidement aux incidents.
+4. **Sauvegarde et stockage sécurisés :** Assurer une sauvegarde régulière et sécurisée des logs pour éviter la perte de données en cas d'incident et pour des besoins d'analyse à long terme.
+
+## Mise en place de la faille
+
+le but pour mettre cette faille dans notre site est de faire en sorte de générer le moins de logs possible, notamment sur la sécurité. Par exemple ne pas générer lorsqu’il y a plus de 10 tentatives de loggings puis faire un test en bruteforce pour montrer que rien n’est généré. 
+
+## Doc supplémentaires
+
+https://learn.snyk.io/lesson/logging-vulnerabilities/
