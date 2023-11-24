@@ -1,0 +1,67 @@
+# Metadata Not Removed
+
+La faille "metadata not removed" se réfère à une lacune de sécurité où des informations sensibles ou des métadonnées potentiellement compromettantes sont laissées dans des fichiers, des documents ou des médias partagés de manière inappropriée, exposant ainsi des détails confidentiels aux personnes non autorisées.
+
+Les métadonnées sont des données intégrées à un fichier ou un document qui décrivent et fournissent des informations sur celui-ci. Par exemple, dans un document Word ou un fichier PDF, les métadonnées pourraient inclure des détails sur l'auteur, la date de création, les révisions précédentes, les commentaires, voire même des informations telles que l'emplacement géographique où le fichier a été créé.
+
+Lorsque ces métadonnées contiennent des informations sensibles et ne sont pas supprimées correctement avant de partager ou de diffuser un fichier, cela peut représenter un risque de confidentialité et de sécurité. Par exemple :
+
+1. **Fuites d'informations confidentielles :** Des métadonnées non supprimées pourraient contenir des détails sur les personnes impliquées, des commentaires internes, voire des informations de localisation précises, compromettant la confidentialité.
+2. **Exposition de révisions ou de versions antérieures :** Les métadonnées peuvent révéler des révisions antérieures d'un document, y compris des informations supprimées intentionnellement ou des données obsolètes qui pourraient être exploitables.
+3. **Risques de sécurité :** Certaines métadonnées pourraient contenir des informations sur le logiciel utilisé pour créer le document, les polices, les filigranes ou d'autres détails techniques qui pourraient être exploités pour des attaques ciblées.
+
+# Différents types de métadata
+
+### **Métadonnées HTML :**
+
+1. **Balise `<head>` :** Les métadonnées HTML sont souvent incluses dans la section **`<head>`** du code HTML d'une page web. Cela inclut des éléments comme les balises **`<title>`** pour le titre de la page, **`<meta>`** pour les descriptions, mots-clés, caractère d'encodage, etc.
+
+### **Métadonnées liées au contenu :**
+
+1. **Métadonnées de balises :** Les balises spécifiques telles que **`<meta>`**, **`<link>`**, **`<base>`**, **`<style>`**, **`<script>`**, etc., peuvent contenir des métadonnées liées au contenu, aux feuilles de style, aux scripts, etc.
+
+### **Métadonnées dans les URL :**
+
+1. **URL et paramètres d'URL :** Les URL peuvent contenir des informations telles que les paramètres de requête (query parameters) qui peuvent être considérées comme des métadonnées, par exemple **`?id=123`** dans une URL.
+
+### **Métadonnées dans les fichiers :**
+
+1. **Métadonnées des fichiers :** Les fichiers eux-mêmes peuvent contenir des métadonnées. Par exemple, les images peuvent avoir des métadonnées telles que l'appareil utilisé pour prendre la photo, l'heure, la résolution, etc.
+
+### **Métadonnées des liens :**
+
+1. **Liens et balises `<a>` :** Les balises **`<a>`** peuvent contenir des attributs tels que **`title`**, **`rel`**, etc., qui peuvent agir comme des métadonnées pour les liens.
+
+### **Métadonnées de structure :**
+
+1. **Structure du site :** Les données structurées (Schema.org, JSON-LD) intégrées dans le code peuvent également être considérées comme des métadonnées. Elles fournissent des informations structurées sur le contenu du site, aidant les moteurs de recherche à mieux comprendre le contenu.
+
+### **Métadonnées de sécurité :**
+
+1. **Métadonnées de sécurité :** Certaines métadonnées peuvent concerner des aspects de sécurité tels que les certificats SSL/TLS, les politiques de sécurité des navigateurs, les directives de sécurité HTTP (HTTP headers), etc.
+
+# Métadata intéressantes à montrer
+
+### **Informations personnelles :**
+
+1. **Noms et identifiants :** Des noms d'utilisateurs, d'employés, d'auteurs, etc., peuvent être compromettants s'ils sont visibles publiquement.
+2. **Adresses e-mail :** L'exposition d'adresses e-mail peut être exploitable pour des campagnes de phishing ou de spam.
+3. **Numéros d'identification :** Comme les numéros de sécurité sociale, numéros d'identification personnels, etc.
+
+### **Données de connexion :**
+
+1. **Mots de passe :** Tout stockage non sécurisé ou exposition de mots de passe représente un risque majeur pour la sécurité.
+2. **Tokens et clés d'authentification :** Les clés API, les jetons d'authentification, etc., peuvent être compromettants s'ils sont exposés.
+
+### **Informations financières (le plus simple à montrer je pense) :**
+
+1. **Cartes de crédit / données bancaires :** L'exposition de numéros de cartes de crédit ou d'autres informations financières peut conduire à des fraudes et des utilisations abusives.
+
+### **Données de localisation :**
+
+1. **Coordonnées GPS :** Les métadonnées de localisation peuvent révéler des informations sur les mouvements et les habitudes d'une personne.
+
+### **Informations sur le matériel et les logiciels :**
+
+1. **Versions logicielles :** Les informations sur les versions de logiciels ou de services utilisés peuvent être exploitées pour des attaques ciblées.
+2. **Informations de configuration :** Comme les clés ou les configurations spécifiques pouvant être utilisées pour accéder à des systèmes.
