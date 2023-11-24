@@ -30,7 +30,7 @@ Injection with the script does this:
 {
       id: 1,
       author: "John Doe",
-      content: "This is my first post! <script>alert('hey');</script> This is my first",
+      content: "This is my first post! <img src="x" onerror="alert('hey')">",
       timestamp: "2023-01-01T12:00:00",         
       likes: 20,
       comments: [
@@ -58,7 +58,8 @@ Please replace the links with the correct URLs where the images are hosted. If t
 
 You need to write a blog post with a comment section. The comment section must be vulnerable to XSS. like this:
 
-![image](https://github.com/GuillaumeDorschner/HackMe/assets/44686652/38ef205f-2891-4ded-acb9-9adf5e00ad63)
+![image](https://github.com/GuillaumeDorschner/HackMe/assets/44686652/d95df2e4-17b8-4f07-b54b-1436b6af5df3)
+
 
 then all the users will exec you script when they will read your post. Example:
 
