@@ -6,28 +6,41 @@ SQL Injection involves inserting or "injecting" an SQL query via the input data 
 
 ## 🔄 How It Works
 
-1. **💻 User Input**: The attacker inputs malicious SQL code into an application's input fields.
-2. **🔗 Exploiting Vulnerabilities**: The application, if vulnerable, processes this input as part of an SQL query.
-3. **📊 Database Manipulation**: This allows the attacker to manipulate the database, often retrieving, modifying, or deleting data.
+1. **User Input**: The attacker inputs malicious SQL code into an application's input fields.
+2. **Exploiting Vulnerabilities**: The application, if vulnerable, processes this input as part of an SQL query.
+3. **Database Manipulation**: This allows the attacker to manipulate the database, often retrieving, modifying, or deleting data.
 
 ## 🔍 Detection
 
-1. **🔎 Log Analysis**: Regularly review logs for unusual query patterns.
-2. **🛡️ Intrusion Detection Systems**: Use systems that can identify SQL injection patterns.
-3. **📡 Network Monitoring**: Monitor network traffic for unusual database requests.
+1. **Log Analysis**: Regularly review logs for unusual query patterns.
+2. **Intrusion Detection Systems**: Use systems that can identify SQL injection patterns.
+3. **Network Monitoring**: Monitor network traffic for unusual database requests.
 
 ## 🛡️ Prevention
 
-1. **🔐 Use Prepared Statements**: With parameterized queries to prevent injection.
-2. **🧱 Employ Web Application Firewalls**: To filter out malicious data.
-3. **👩‍💻 Regular Code Reviews**: To identify and fix vulnerabilities.
-4. **📚 Educate Developers**: About secure coding practices.
+1. **Use Prepared Statements**: With parameterized queries to prevent injection.
+2. **Employ Web Application Firewalls**: To filter out malicious data.
+3. **Regular Code Reviews**: To identify and fix vulnerabilities.
+4. **Educate Developers**: About secure coding practices.
 
-## 🎭 Example Scenarios
+## 🎭 Example Scenario
 
-1. **💳 Data Theft**: An attacker retrieves sensitive customer data.
-2. **🔓 Unauthorized Access**: Gaining admin access by manipulating login queries.
-3. **💥 Data Corruption**: Deleting or altering records through malicious queries.
+Here is an example of a code snippet vulnerable to SQL injection:
+
+```js
+const result = await database.query(
+      `SELECT user_id,email,first_name,last_name,avatar FROM users WHERE password='${password}' AND email='${email}';`
+    );
+```
+The query directly embeds user inputs (password and email) into the SQL command. This is done through string concatenation, which is inherently insecure.
+
+An attacker could exploit this by inserting SQL code into the password or email fields. For example, entering something like " ' OR '1'='1 " as the password could manipulate the query to return a specific user, bypassing authentication.
+
+![image](https://github.com/GuillaumeDorschner/HackMe/assets/82099171/970a4581-669f-48de-945d-6506f2604a09)
+
+
+And the connection is a success:
+![image](https://github.com/GuillaumeDorschner/HackMe/assets/82099171/0a905cfd-1d17-4a74-8c24-f9694aca245a)
 
 ## 📚 References
 
@@ -37,11 +50,11 @@ SQL Injection involves inserting or "injecting" an SQL query via the input data 
 
 ## 🛠️ How to do it?
 
-1. **📝 Learn SQL Injection Techniques**:
+1. **Learn SQL Injection Techniques**:
    - Study different types of SQL injection attacks, such as tautologies, illegal/logically incorrect queries, union queries, and piggybacked queries.
    - Understand the basics of SQL queries and how they can be manipulated.
 
-2. **🧪 Craft and Test Malicious SQL Queries**:
+2. **Craft and Test Malicious SQL Queries**:
    - Develop SQL queries that exploit known vulnerabilities in SQL databases, like input fields that don’t sanitize user input.
    - Test these queries against your test database to observe how SQL injection can manipulate or retrieve data.
 
