@@ -1,29 +1,29 @@
-# 💉 SQL Injection
+# SQL Injection
 
-## 📖 Definition
+## Definition
 
 SQL Injection involves inserting or "injecting" an SQL query via the input data from the client to the application. This can lead to unauthorized access to database information, data manipulation, and other malicious activities. A SQL injection vulnerability occurs when a web application uses user input data without properly filtering or validating it, allowing an attacker to inject malicious SQL code into the application's SQL queries.
 
-## 🔄 How It Works
+## How It Works
 
 1. **User Input**: The attacker inputs malicious SQL code into an application's input fields.
 2. **Exploiting Vulnerabilities**: The application, if vulnerable, processes this input as part of an SQL query.
 3. **Database Manipulation**: This allows the attacker to manipulate the database, often retrieving, modifying, or deleting data.
 
-## 🔍 Detection
+## Detection
 
 1. **Log Analysis**: Regularly review logs for unusual query patterns.
 2. **Intrusion Detection Systems**: Use systems that can identify SQL injection patterns.
 3. **Network Monitoring**: Monitor network traffic for unusual database requests.
 
-## 🛡️ Prevention
+## Prevention
 
 1. **Use Prepared Statements**: With parameterized queries to prevent injection.
 2. **Employ Web Application Firewalls**: To filter out malicious data.
 3. **Regular Code Reviews**: To identify and fix vulnerabilities.
 4. **Educate Developers**: About secure coding practices.
 
-## 🎭 Example Scenario
+## Example Scenario
 
 Here is an example of a code snippet vulnerable to SQL injection:
 
@@ -42,13 +42,13 @@ An attacker could exploit this by inserting SQL code into the password or email 
 And the connection is a success:
 ![image](https://github.com/GuillaumeDorschner/HackMe/assets/82099171/0a905cfd-1d17-4a74-8c24-f9694aca245a)
 
-## 📚 References
+## References
 
 1. [OWASP SQL Injection Guide](https://owasp.org/www-community/attacks/SQL_Injection)
 2. [CISA SQL Injection Tips](https://www.cisa.gov/uscert/ncas/tips/ST04-014)
 3. [SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
 
-## 🛠️ How to do it?
+## How to do it?
 
 1. **Learn SQL Injection Techniques**:
    - Study different types of SQL injection attacks, such as tautologies, illegal/logically incorrect queries, union queries, and piggybacked queries.
