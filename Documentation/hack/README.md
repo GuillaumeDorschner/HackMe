@@ -8,9 +8,9 @@ All the vulnerabilities listed below are essential to know when it comes to web 
 
 - [XSS (Cross-Site Scripting)](xss.md)
   *Injecting malicious scripts into web pages viewed by other users.*
-- [RAFI (Remote File Inclusion)](rafi.md)
+- [RFI (Remote File Inclusion)](rfi.md)
   *Exploiting scripts to include files located on remote servers.*
-- [Remote File Insertion](remote-file-insertion.md)
+- [File Upload](file-upload.md)
   *Inserting malicious files into web applications.*
 - [CSRF (Cross-Site Request Forgery)](csrf.md)
   *Unauthorized commands are transmitted from a user the website trusts.*
