@@ -35,8 +35,3 @@ The goal of implementing this flaw on our site is to generate as few logs as pos
 ## References
 
 - [Snyk Learning - Logging Vulnerabilities](https://learn.snyk.io/lesson/logging-vulnerabilities/)
-
-## How to do it?
-
-...
-
