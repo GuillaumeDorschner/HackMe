@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
 
   let showAlert = false;
+  let showPassword = false;
   let validationError = "";
   let backendUrl;
 
@@ -36,6 +37,10 @@
         showAlert = true;
       }
     }
+  }
+
+  function togglePasswordVisibility() {
+    showPassword = !showPassword;
   }
 
   function validateFields() {
@@ -95,14 +100,31 @@
             class="mb-2 inline-block text-sm text-gray-800 sm:text-base"
             >Password</label
           >
-          <input
-            bind:value={$user.password}
-            name="password"
-            type="password"
-            class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
-          />
+          <div class="relative">
+            {#if showPassword}
+              <input
+                bind:value={$user.password}
+                name="password"
+                type="text"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
+              />
+            {:else}
+              <input
+                bind:value={$user.password}
+                name="password"
+                type="password"
+                class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-primary transition duration-100 focus:ring"
+              />
+            {/if}
+            <button
+              type="button"
+              class="absolute inset-y-0 right-0 flex items-center pr-3"
+              on:click={togglePasswordVisibility}
+            >
+              <span class="text-sm text-gray-500">{showPassword ? 'Hide' : 'Show'}</span>
+            </button>
+          </div>
         </div>
-
         <button
           class="block rounded-lg bg-gray-800 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-gray-700 focus-visible:ring active:bg-gray-600 md:text-base"
           on:click|preventDefault={login}>Log in</button
