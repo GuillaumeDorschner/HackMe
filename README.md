@@ -19,6 +19,7 @@ HackMe is built using the following technologies:
 
 - [Svelte Kit](https://kit.svelte.dev/)
 - [Node.js](https://nodejs.org/en/)
+- [Express](https://expressjs.com/)
 - [Postgres](https://www.postgresql.org/download/)
 
 Embark on your journey to master the art of ethical hacking with HackMe and contribute to a safer digital world. 🌐✨
