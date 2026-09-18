@@ -9,6 +9,8 @@ Begin your journey into ethical hacking by deploying HackMe through one of the f
 - [Deploy with Docker](Documentation/installation/docker.md) [recommended]
 - [Manual Installation](Documentation/installation/manual.md)
 
+For Docker deployments, the frontend is available at `localhost:3000`.
+
 ## 🧙🏻 Hacking
 
 The Hack section is [there](Documentation/hack/README.md)
